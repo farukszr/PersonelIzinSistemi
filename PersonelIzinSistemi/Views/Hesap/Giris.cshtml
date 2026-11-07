@@ -1,0 +1,844 @@
+@model PersonelIzinSistemi.ViewModels.GirisViewModel
+
+@{
+    ViewData["Title"] = "Giriş Yap";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description"
+          content="Personel Yönetim Sistemi güvenli giriş ekranı." />
+
+    <title>Giriş Yap | Personel Yönetimi</title>
+
+    <style>
+            :root {
+                --navy: #101d36;
+                --purple: #6265f5;
+                --purple-dark: #4e51db;
+                --ink: #1b2942;
+                --muted: #8491a6;
+                --line: #e5eaf3;
+            }
+
+            * {
+                box-sizing: border-box;
+            }
+
+            body {
+                margin: 0;
+                min-height: 100vh;
+                min-height: 100dvh;
+                font-family: "Segoe UI", Arial, sans-serif;
+                color: var(--ink);
+                background: #f5f7fc;
+                -webkit-font-smoothing: antialiased;
+            }
+
+            a {
+                text-decoration: none;
+            }
+
+            .login-layout {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                min-height: 100vh;
+                min-height: 100dvh;
+            }
+
+            /* SOL TANITIM ALANI */
+
+            .login-showcase {
+                position: relative;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                overflow: hidden;
+                padding: 48px clamp(35px, 5vw, 85px);
+                background: radial-gradient( circle at 80% 30%, rgba(111, 111, 255, .28), transparent 45% ), linear-gradient(145deg, #101d36, #1c2b52);
+                color: #fff;
+            }
+
+                .login-showcase::before {
+                    content: "";
+                    position: absolute;
+                    width: 430px;
+                    height: 430px;
+                    border: 1px solid rgba(255,255,255,.07);
+                    border-radius: 50%;
+                    right: -200px;
+                    top: 12%;
+                    pointer-events: none;
+                }
+
+                .login-showcase::after {
+                    content: "";
+                    position: absolute;
+                    width: 620px;
+                    height: 620px;
+                    border: 1px solid rgba(255,255,255,.055);
+                    border-radius: 50%;
+                    right: -280px;
+                    top: 2%;
+                    pointer-events: none;
+                }
+
+            .login-brand {
+                display: inline-flex;
+                align-items: center;
+                gap: 13px;
+                color: #fff;
+                font-size: 20px;
+                font-weight: 800;
+                letter-spacing: -.6px;
+                position: relative;
+                z-index: 1;
+                width: fit-content;
+            }
+
+            .login-brand-mark {
+                display: grid;
+                place-items: center;
+                width: 44px;
+                height: 44px;
+                border-radius: 13px;
+                background: linear-gradient(135deg, #8588ff, #5457e9);
+                font-size: 25px;
+                box-shadow: 0 8px 22px rgba(0,0,0,.12);
+            }
+
+            .showcase-content {
+                position: relative;
+                z-index: 1;
+                max-width: 530px;
+                margin: 65px 0;
+            }
+
+            .showcase-badge {
+                display: inline-flex;
+                align-items: center;
+                gap: 9px;
+                padding: 10px 15px;
+                border-radius: 50px;
+                background: rgba(132,139,255,.13);
+                border: 1px solid rgba(164,170,255,.15);
+                color: #c5c8ff;
+                font-size: 11px;
+                font-weight: 800;
+                letter-spacing: 1px;
+            }
+
+            .showcase-badge-dot {
+                width: 7px;
+                height: 7px;
+                background: #9b9dff;
+                border-radius: 50%;
+            }
+
+            .showcase-content h1 {
+                font-size: clamp(37px, 4vw, 59px);
+                line-height: 1.15;
+                letter-spacing: -2px;
+                margin: 27px 0 23px;
+                font-weight: 800;
+            }
+
+            .showcase-highlight {
+                color: #999cff;
+            }
+
+            .showcase-description {
+                color: #aebbd4;
+                font-size: 15px;
+                line-height: 1.95;
+                max-width: 430px;
+                margin: 0;
+            }
+
+            .showcase-features {
+                display: grid;
+                gap: 22px;
+                margin-top: 47px;
+            }
+
+            .showcase-feature {
+                display: flex;
+                align-items: center;
+                gap: 15px;
+            }
+
+            .showcase-feature-icon {
+                width: 46px;
+                height: 46px;
+                flex-shrink: 0;
+                display: grid;
+                place-items: center;
+                border-radius: 13px;
+                background: rgba(133,140,255,.13);
+                border: 1px solid rgba(159,166,255,.13);
+                color: #b3b6ff;
+            }
+
+                .showcase-feature-icon svg {
+                    width: 21px;
+                    height: 21px;
+                    fill: none;
+                    stroke: currentColor;
+                    stroke-width: 1.8;
+                    stroke-linecap: round;
+                    stroke-linejoin: round;
+                }
+
+            .showcase-feature strong {
+                display: block;
+                font-size: 14px;
+                margin-bottom: 5px;
+                color: #fff;
+            }
+
+            .showcase-feature span {
+                font-size: 12px;
+                color: #9caac5;
+                line-height: 1.6;
+            }
+
+            .showcase-footer {
+                position: relative;
+                z-index: 1;
+                font-size: 12px;
+                color: #7789ad;
+            }
+
+            /* SAĞ GİRİŞ ALANI */
+
+            .login-main {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 55px 35px;
+                background: #fff;
+            }
+
+            .login-form-container {
+                width: 100%;
+                max-width: 420px;
+            }
+
+            .login-mobile-brand {
+                display: none;
+            }
+
+            .login-eyebrow {
+                color: var(--purple);
+                font-size: 11px;
+                font-weight: 800;
+                letter-spacing: 1.8px;
+                margin-bottom: 17px;
+            }
+
+            .login-title {
+                font-size: clamp(30px, 3vw, 39px);
+                letter-spacing: -1.2px;
+                color: var(--navy);
+                margin: 0 0 12px;
+                font-weight: 800;
+            }
+
+            .login-subtitle {
+                font-size: 14px;
+                color: var(--muted);
+                line-height: 1.8;
+                margin: 0 0 37px;
+            }
+
+            .login-field {
+                margin-bottom: 23px;
+            }
+
+            .login-label {
+                display: block;
+                font-size: 13px;
+                font-weight: 700;
+                color: #34425c;
+                margin-bottom: 10px;
+            }
+
+            .login-input-wrap {
+                position: relative;
+            }
+
+            .login-input {
+                display: block;
+                width: 100%;
+                height: 53px;
+                border: 1px solid #dfe5ef;
+                border-radius: 11px;
+                padding: 0 16px 0 47px;
+                font-size: 14px;
+                font-family: inherit;
+                color: #25334d;
+                background: #fff;
+                outline: none;
+                transition: border-color .2s, box-shadow .2s;
+            }
+
+                .login-input::placeholder {
+                    color: #a4afc0;
+                }
+
+                .login-input:focus {
+                    border-color: var(--purple);
+                    box-shadow: 0 0 0 4px rgba(98,101,245,.09);
+                }
+
+            .login-input-icon {
+                position: absolute;
+                left: 16px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #9aa7bc;
+                pointer-events: none;
+                display: flex;
+            }
+
+                .login-input-icon svg {
+                    width: 19px;
+                    height: 19px;
+                    fill: none;
+                    stroke: currentColor;
+                    stroke-width: 1.8;
+                    stroke-linecap: round;
+                    stroke-linejoin: round;
+                }
+
+            .login-password-input {
+                padding-right: 52px;
+            }
+
+            .login-password-toggle {
+                position: absolute;
+                top: 50%;
+                right: 9px;
+                transform: translateY(-50%);
+                width: 37px;
+                height: 37px;
+                display: grid;
+                place-items: center;
+                background: transparent;
+                border: none;
+                border-radius: 8px;
+                color: #98a5b9;
+                cursor: pointer;
+            }
+
+                .login-password-toggle:hover {
+                    background: #f2f3ff;
+                    color: var(--purple);
+                }
+
+                .login-password-toggle svg {
+                    width: 19px;
+                    height: 19px;
+                    fill: none;
+                    stroke: currentColor;
+                    stroke-width: 1.8;
+                    stroke-linecap: round;
+                    stroke-linejoin: round;
+                }
+
+            .login-options {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 12px;
+                margin: 4px 0 29px;
+            }
+
+            .login-remember {
+                display: inline-flex;
+                align-items: center;
+                gap: 10px;
+                font-size: 13px;
+                color: #66758e;
+                cursor: pointer;
+            }
+
+                .login-remember input {
+                    width: 16px;
+                    height: 16px;
+                    accent-color: var(--purple);
+                    cursor: pointer;
+                }
+
+            .login-submit {
+                width: 100%;
+                height: 53px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 12px;
+                background: var(--purple);
+                color: #fff;
+                border: none;
+                border-radius: 11px;
+                font-family: inherit;
+                font-size: 14px;
+                font-weight: 750;
+                cursor: pointer;
+                box-shadow: 0 10px 25px rgba(98,101,245,.20);
+                transition: .2s;
+            }
+
+                .login-submit:hover {
+                    background: var(--purple-dark);
+                    transform: translateY(-2px);
+                }
+
+                .login-submit:disabled {
+                    opacity: .7;
+                    cursor: wait;
+                    transform: none;
+                }
+
+            .login-divider {
+                display: flex;
+                align-items: center;
+                gap: 15px;
+                margin: 32px 0 25px;
+                color: #a1acbc;
+                font-size: 12px;
+            }
+
+                .login-divider::before,
+                .login-divider::after {
+                    content: "";
+                    height: 1px;
+                    flex: 1;
+                    background: #e9edf4;
+                }
+
+            .login-back {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 9px;
+                color: #65738b;
+                font-size: 13px;
+                font-weight: 650;
+                transition: color .2s;
+            }
+
+                .login-back:hover {
+                    color: var(--purple);
+                }
+
+            .login-validation {
+                color: #b91c1c;
+                background: #fff1f2;
+                border: 1px solid #fecdd3;
+                padding: 12px 15px;
+                border-radius: 9px;
+                margin-bottom: 23px;
+                font-size: 12px;
+                line-height: 1.7;
+            }
+
+                .login-validation:empty {
+                    display: none;
+                }
+
+                .login-validation ul {
+                    padding-left: 17px;
+                    margin: 0;
+                }
+
+            .login-field-error {
+                display: block;
+                font-size: 12px;
+                color: #dc2626;
+                margin-top: 7px;
+            }
+
+            .login-bottom {
+                text-align: center;
+                margin-top: 44px;
+                font-size: 11px;
+                color: #a6b0bf;
+            }
+
+            @@media (max-width: 1000px) {
+                .login-showcase {
+                    padding: 35px;
+                }
+
+                .showcase-content h1 {
+                    font-size: 38px;
+                }
+
+                .login-main {
+                    padding: 40px 28px;
+                }
+            }
+
+            @@media (max-width: 760px) {
+                .login-layout {
+                    grid-template-columns: 1fr;
+                }
+
+                .login-showcase {
+                    display: none;
+                }
+
+                .login-main {
+                    min-height: 100vh;
+                    min-height: 100dvh;
+                    padding: 35px 24px;
+                }
+
+                .login-mobile-brand {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 10px;
+                    margin-bottom: 55px;
+                    color: var(--navy);
+                    font-size: 17px;
+                    font-weight: 800;
+                }
+
+                    .login-mobile-brand .login-brand-mark {
+                        width: 38px;
+                        height: 38px;
+                        font-size: 22px;
+                        color: #fff;
+                    }
+
+                .login-subtitle {
+                    margin-bottom: 30px;
+                }
+            }
+
+            @@media (prefers-reduced-motion: reduce) {
+                *,
+                *::before,
+                *::after {
+                    transition: none !important;
+                }
+            }
+            /* Hata yokken kırmızı uyarı kutusunu gizle */
+            .login-validation.validation-summary-valid,
+            .login-validation:empty {
+                display: none !important;
+            }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-layout">
+
+        <!-- SOL TANITIM -->
+
+        <aside class="login-showcase">
+
+            <a asp-controller="AnaSayfa"
+               asp-action="Index"
+               class="login-brand">
+
+                <span class="login-brand-mark">P</span>
+                Personel Yönetimi
+            </a>
+
+            <div class="showcase-content">
+
+                <div class="showcase-badge">
+                    <span class="showcase-badge-dot"></span>
+                    PERSONEL VE İZİN YÖNETİMİ
+                </div>
+
+                <h1>
+                    Ekibinizi yönetin.<br />
+                    <span class="showcase-highlight">
+                        İşinizi kolaylaştırın.
+                    </span>
+                </h1>
+
+                <p class="showcase-description">
+                    Personel bilgilerinizi, izin taleplerinizi ve
+                    yönetim süreçlerinizi tek bir platformdan
+                    kolayca takip edin.
+                </p>
+
+                <div class="showcase-features">
+
+                    <div class="showcase-feature">
+                        <div class="showcase-feature-icon">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                                <circle cx="9" cy="7" r="4" />
+                                <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                            </svg>
+                        </div>
+
+                        <div>
+                            <strong>Merkezi Personel Yönetimi</strong>
+                            <span>
+                                Tüm çalışan bilgileri tek bir yerde.
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="showcase-feature">
+                        <div class="showcase-feature-icon">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <rect x="3" y="5" width="18" height="16" rx="2" />
+                                <path d="M16 3v4M8 3v4M3 10h18" />
+                                <path d="m9 16 2 2 4-4" />
+                            </svg>
+                        </div>
+
+                        <div>
+                            <strong>Kolay İzin Takibi</strong>
+                            <span>
+                                Başvurular ve onaylar tek panelde.
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="showcase-feature">
+                        <div class="showcase-feature-icon">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" />
+                                <path d="m9 12 2 2 4-4" />
+                            </svg>
+                        </div>
+
+                        <div>
+                            <strong>Rol Bazlı Yetkilendirme</strong>
+                            <span>
+                                Yönetici ve personel için ayrı erişim.
+                            </span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="showcase-footer">
+                © @DateTime.Now.Year Personel Yönetimi
+            </div>
+
+        </aside>
+
+        <!-- SAĞ GİRİŞ FORMU -->
+
+        <main class="login-main">
+
+            <div class="login-form-container">
+
+                <a asp-controller="AnaSayfa"
+                   asp-action="Index"
+                   class="login-mobile-brand">
+
+                    <span class="login-brand-mark">P</span>
+                    Personel Yönetimi
+                </a>
+
+                <div class="login-eyebrow">
+                    HESABINIZA GİRİŞ YAPIN
+                </div>
+
+                <h2 class="login-title">
+                    Tekrar hoş geldiniz.
+                </h2>
+
+                <p class="login-subtitle">
+                    Devam etmek için e-posta adresiniz ve
+                    parolanızla hesabınıza giriş yapın.
+                </p>
+
+                <form method="post"
+                      asp-controller="Hesap"
+                      asp-action="Giris"
+                      asp-route-returnUrl="@ViewBag.ReturnUrl">
+
+                    @Html.AntiForgeryToken()
+
+                    <div asp-validation-summary="All"
+                         class="login-validation"></div>
+
+                    <!-- E-POSTA -->
+
+                    <div class="login-field">
+
+                        <label asp-for="Email"
+                               class="login-label">
+                            E-posta Adresi
+                        </label>
+
+                        <div class="login-input-wrap">
+
+                            <span class="login-input-icon">
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <rect x="2" y="4" width="20" height="16" rx="2" />
+                                    <path d="m22 7-10 6L2 7" />
+                                </svg>
+                            </span>
+
+                            <input asp-for="Email"
+                                   type="email"
+                                   class="login-input"
+                                   placeholder="ornek@sirket.com"
+                                   autocomplete="username"
+                                   required />
+
+                        </div>
+
+                        <span asp-validation-for="Email"
+                              class="login-field-error"></span>
+
+                    </div>
+
+                    <!-- PAROLA -->
+
+                    <div class="login-field">
+
+                        <label asp-for="Parola"
+                               class="login-label">
+                            Parola
+                        </label>
+
+                        <div class="login-input-wrap">
+
+                            <span class="login-input-icon">
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <rect x="4" y="11" width="16" height="10" rx="2" />
+                                    <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+                                </svg>
+                            </span>
+
+                            <input asp-for="Parola"
+                                   type="password"
+                                   id="loginPassword"
+                                   class="login-input login-password-input"
+                                   placeholder="Parolanızı girin"
+                                   autocomplete="current-password"
+                                   required />
+
+                            <button type="button"
+                                    class="login-password-toggle"
+                                    id="passwordToggle"
+                                    aria-label="Parolayı göster"
+                                    aria-pressed="false">
+
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" />
+                                    <circle cx="12" cy="12" r="3" />
+                                </svg>
+
+                            </button>
+
+                        </div>
+
+                        <span asp-validation-for="Parola"
+                              class="login-field-error"></span>
+
+                    </div>
+
+                    <!-- BENİ HATIRLA -->
+
+                    <div class="login-options">
+
+                        <label class="login-remember">
+                            <input asp-for="BeniHatirla" />
+                            <span>Beni hatırla</span>
+                        </label>
+
+                    </div>
+
+                    <!-- GİRİŞ BUTONU -->
+
+                    <button type="submit"
+                            class="login-submit"
+                            id="loginSubmit">
+
+                        Giriş Yap
+                        <span aria-hidden="true">→</span>
+
+                    </button>
+
+                </form>
+
+                <div class="login-divider">
+                    veya
+                </div>
+
+                <a asp-controller="AnaSayfa"
+                   asp-action="Index"
+                   class="login-back">
+
+                    <span aria-hidden="true">←</span>
+                    Ana Sayfaya Dön
+
+                </a>
+
+                <div class="login-bottom">
+                    Personel Yönetim Sistemi
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+    <script>
+            document.addEventListener("DOMContentLoaded", function () {
+
+                const password = document.getElementById("loginPassword");
+                const toggle = document.getElementById("passwordToggle");
+                const form = document.querySelector(".login-form-container form");
+                const submit = document.getElementById("loginSubmit");
+
+                if (password && toggle) {
+                    toggle.addEventListener("click", function () {
+
+                        const isHidden = password.type === "password";
+
+                        password.type = isHidden ? "text" : "password";
+
+                        toggle.setAttribute(
+                            "aria-label",
+                            isHidden ? "Parolayı gizle" : "Parolayı göster"
+                        );
+
+                        toggle.setAttribute(
+                            "aria-pressed",
+                            isHidden ? "true" : "false"
+                        );
+
+                    });
+                }
+
+                if (form && submit) {
+                    form.addEventListener("submit", function (event) {
+
+                        if (!form.checkValidity()) {
+                            return;
+                        }
+
+                        submit.disabled = true;
+                        submit.textContent = "Giriş yapılıyor...";
+
+                    });
+                }
+
+            });
+    </script>
+
+</body>
+</html>

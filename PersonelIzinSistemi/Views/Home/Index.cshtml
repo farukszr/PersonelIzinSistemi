@@ -1,0 +1,116 @@
+@using PersonelIzinSistemi.Models
+
+
+@{
+    ViewData["Title"] = "Genel Bakış";
+
+    int toplamPersonel = ViewBag.PersonelSayisi ?? 0;
+    int toplamIzin = ViewBag.ToplamIzin ?? 0;
+    int bekleyenIzin = ViewBag.BekleyenIzin ?? 0;
+    int onaylananIzin = ViewBag.OnaylananIzin ?? 0;
+    int reddedilenIzin = ViewBag.ReddedilenIzin ?? 0;
+
+    var sonIzinler = ViewBag.SonIzinler as List<IzinTalebi>
+        ?? new List<IzinTalebi>();
+    var son = ViewBag.SonPersoneller as List<Personel>
+?? new List<Personel>();
+}
+
+
+<div class="page-heading">
+    <div>
+        <div class="eyebrow">YÖNETİM PANELİ</div>
+        <h1>Genel Bakış <span class="wave">✦</span></h1>
+        <p>Ekibinizin güncel durumunu tek bir yerden takip edin.</p>
+    </div>
+    <a class="btn btn-primary" asp-controller="Personeller" asp-action="Create">＋ Yeni Personel</a>
+</div>
+
+<div class="metrics">
+    <div class="metric-card">
+        <div class="metric-icon blue">♙</div>
+        <div class="metric-label">Toplam Personel</div>
+        <div class="metric-number">@ViewBag.PersonelSayisi</div>
+        <div class="metric-foot">Kayıtlı çalışan sayısı</div>
+    </div>
+    <div class="metric-card">
+        <div class="metric-icon purple">▦</div>
+        <div class="metric-label">Departman Sayısı</div>
+        <div class="metric-number">@ViewBag.DepartmanSayisi</div>
+        <div class="metric-foot">Aktif departmanlar</div>
+    </div>
+    <div class="metric-card">
+        <div class="metric-icon green">₺</div>
+        <div class="metric-label">Toplam Maaş</div>
+        <div class="metric-number compact">@(((decimal)ViewBag.ToplamMaas).ToString("N0")) ₺</div>
+        <div class="metric-foot">Kayıtlı personel toplamı</div>
+    </div>
+
+    <div class="metric-card">
+        <div class="metric-icon amber">◷</div>
+
+        <div class="metric-label">
+            İzin Talepleri
+        </div>
+
+        <div class="metric-number">
+            @toplamIzin
+        </div>
+
+        <div class="metric-foot">
+            @bekleyenIzin bekleyen ·
+            @onaylananIzin onaylanan ·
+            @reddedilenIzin reddedilen
+        </div>
+    </div>
+
+</div>
+
+<div class="panel">
+    <div class="panel-heading">
+        <div>
+            <h2>Son Eklenen Personeller</h2>
+            <p>Veritabanına eklenen son 5 personel</p>
+        </div>
+        <a class="text-link" asp-controller="Personeller" asp-action="Index">Tümünü görüntüle →</a>
+    </div>
+    <div class="table-scroll">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>PERSONEL</th>
+                    <th>DEPARTMAN</th>
+                    <th>MAAŞ</th>
+                    <th>İŞLEM</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!son.Any())
+                {
+                    <tr>
+                        <td colspan="4" class="empty-state">Henüz personel eklenmedi.</td>
+                    </tr>
+                }
+                @foreach (var x in son)
+                {
+                    <tr>
+                        <td>
+                            <div class="person-cell">
+                                <span class="person-avatar">@(x.Ad.Length > 0 ? x.Ad[0].ToString().ToUpperInvariant() : "?")</span>
+                                <div>
+                                    <strong>@x.Ad @x.Soyad</strong>
+                                    <small>Personel #@x.Id</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="department-pill">@x.Departman</span></td>
+                        <td class="money">@x.Maas.ToString("N2") ₺</td>
+                        <td>
+                            <a class="text-link" asp-controller="Personeller" asp-action="Edit" asp-route-id="@x.Id">Düzenle →</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

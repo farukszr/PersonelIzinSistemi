@@ -1,0 +1,110 @@
+@model IEnumerable<PersonelIzinSistemi.Models.UygulamaKullanicisi>
+@{
+    ViewData["Title"] = "Kullanıcılar";
+    var roller = ViewBag.Roller as List<string> ?? new List<string>();
+    var liste = Model.ToList();
+}
+<div class="page-heading">
+    <div><div class="eyebrow">YÖNETİM</div><h1>Kullanıcı Hesapları</h1><p>Personel giriş hesaplarını yönetin.</p></div>
+    <a class="btn btn-primary" asp-action="Create">＋ Hesap Oluştur</a>
+</div>
+<div class="panel">
+    <div class="table-scroll">
+        <table class="data-table">
+
+            <thead>
+                <tr>
+                    <th>E-POSTA</th>
+                    <th>PERSONEL</th>
+                    <th>ROL</th>
+                    <th>DURUM</th>
+                    <th>İŞLEMLER</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                @for (var i = 0; i < liste.Count; i++)
+                {
+                    var kullanici = liste[i];
+                    var rol = i < roller.Count ? roller[i] : "—";
+                    var yonetici = rol.Split(',', StringSplitOptions.TrimEntries).Contains("Yonetici");
+                    var kendisi = string.Equals(
+                        User.Identity?.Name,
+                        kullanici.UserName,
+                        StringComparison.OrdinalIgnoreCase);
+
+                    // Kullanıcının pasif olup olmadığını kontrol et
+                    var pasif = kullanici.LockoutEnabled
+                        && kullanici.LockoutEnd.HasValue
+                        && kullanici.LockoutEnd.Value > DateTimeOffset.UtcNow;
+
+                    
+                    <tr>
+                        <td>@kullanici.Email</td>
+
+                        <td>
+                            @(kullanici.Personel == null
+                                ? "—"
+                                : kullanici.Personel.Ad + " " + kullanici.Personel.Soyad)
+                        </td>
+
+                        <td>@rol</td>
+
+                        <td>
+                            @if (pasif)
+                            {
+                                <span style="color:#dc4c55;font-weight:700;">
+                                    ● Pasif
+                                </span>
+                            }
+                            else
+                            {
+                                <span style="color:#16a36a;font-weight:700;">
+                                    ● Aktif
+                                </span>
+                            }
+                        </td>
+
+                        <td>
+                            @if (!kendisi && !yonetici)
+                            {
+                                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                                    <form asp-action="DurumDegistir"
+                                          asp-route-id="@kullanici.Id"
+                                          method="post">
+                                        @Html.AntiForgeryToken()
+
+                                        <button class="btn" type="submit">
+                                            @(pasif ? "Aktifleştir" : "Pasifleştir")
+                                        </button>
+                                    </form>
+
+                                    <form asp-action="Delete"
+                                          asp-route-id="@kullanici.Id"
+                                          method="post"
+                                          onsubmit="return confirm('Bu kullanıcı hesabı kalıcı olarak silinsin mi?');">
+                                        @Html.AntiForgeryToken()
+
+                                        <button class="btn" type="submit">
+                                            Hesabı Sil
+                                        </button>
+                                    </form>
+                                </div>
+                            }
+                            else
+                            {
+                                <span>—</span>
+                            }
+                        </td>
+                    </tr>
+
+                }
+                @if (liste.Count == 0)
+                {
+                    <tr><td colspan="5" class="empty-state">Henüz kullanıcı bulunmuyor.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

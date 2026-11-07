@@ -1,0 +1,372 @@
+@model PersonelIzinSistemi.Models.IzinTalebi
+
+@{
+    ViewData["Title"] = "Yeni İzin Talebi";
+    bool yonetici = User.IsInRole("Yonetici");
+    string bugun = DateTime.Today.ToString("yyyy-MM-dd");
+}
+
+<style>
+    .leave-page {
+        max-width: 850px;
+        margin: 0 auto;
+        padding: 24px 0 48px;
+    }
+
+    .leave-heading {
+        margin-bottom: 28px;
+    }
+
+    .leave-heading h1 {
+        font-size: 28px;
+        font-weight: 750;
+        color: #17233b;
+        margin: 0 0 10px;
+        letter-spacing: -.5px;
+    }
+
+    .leave-heading p {
+        color: #7b879e;
+        font-size: 14px;
+        margin: 0;
+        line-height: 1.6;
+    }
+
+    .leave-card {
+        background: #ffffff;
+        border: 1px solid #e8ecf5;
+        border-radius: 18px;
+        box-shadow: 0 8px 35px rgba(30, 45, 90, .045);
+        overflow: hidden;
+    }
+
+    .leave-card-header {
+        padding: 26px 32px;
+        border-bottom: 1px solid #edf0f6;
+    }
+
+    .leave-card-header h2 {
+        font-size: 17px;
+        font-weight: 700;
+        color: #1e293b;
+        margin: 0 0 6px;
+    }
+
+    .leave-card-header p {
+        color: #8a94a8;
+        font-size: 13px;
+        margin: 0;
+    }
+
+    .leave-card-body {
+        padding: 32px;
+    }
+
+    .leave-notice {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        background: #f0f3ff;
+        border: 1px solid #e1e6ff;
+        border-radius: 12px;
+        padding: 15px 18px;
+        color: #5364a5;
+        font-size: 13px;
+        line-height: 1.6;
+        margin-bottom: 28px;
+    }
+
+    .leave-notice-icon {
+        font-size: 17px;
+        flex-shrink: 0;
+    }
+
+    .leave-field {
+        margin-bottom: 25px;
+        min-width: 0;
+    }
+
+    .leave-label {
+        display: block;
+        font-size: 13px;
+        font-weight: 650;
+        color: #344054;
+        margin-bottom: 9px;
+    }
+
+    .leave-input {
+        display: block;
+        box-sizing: border-box;
+        width: 100%;
+        min-width: 0;
+        min-height: 48px;
+        padding: 12px 15px;
+        border: 1px solid #dfe4ee;
+        border-radius: 10px;
+        background: #fff;
+        color: #27344d;
+        font-size: 14px;
+        font-family: inherit;
+        outline: none;
+        transition: border-color .2s, box-shadow .2s;
+    }
+
+    .leave-input:focus {
+        border-color: #6265f4;
+        box-shadow: 0 0 0 4px rgba(98, 101, 244, .10);
+    }
+
+    .leave-input::placeholder {
+        color: #a0a9b9;
+    }
+
+    textarea.leave-input {
+        min-height: 135px;
+        resize: vertical;
+        line-height: 1.7;
+    }
+
+    .leave-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 22px;
+    }
+
+    .leave-help {
+        font-size: 12px;
+        color: #98a2b3;
+        margin-top: 8px;
+    }
+
+    .leave-error {
+        display: block;
+        color: #d92d20;
+        font-size: 12px;
+        margin-top: 7px;
+    }
+
+    .leave-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding-top: 22px;
+        border-top: 1px solid #edf0f6;
+        margin-top: 8px;
+    }
+
+    .leave-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 46px;
+        padding: 0 22px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 650;
+        font-family: inherit;
+        text-decoration: none;
+        cursor: pointer;
+        transition: .2s;
+    }
+
+    .leave-btn-primary {
+        background: #5d5fef;
+        color: #fff;
+        border: 1px solid #5d5fef;
+        box-shadow: 0 4px 12px rgba(93, 95, 239, .18);
+    }
+
+    .leave-btn-primary:hover {
+        background: #494bd7;
+        color: #fff;
+    }
+
+    .leave-btn-secondary {
+        background: #fff;
+        color: #667085;
+        border: 1px solid #e4e7ec;
+    }
+
+    .leave-btn-secondary:hover {
+        background: #f8fafc;
+        color: #344054;
+    }
+
+    @@media (max-width: 600px) {
+        .leave-page {
+            padding: 16px 0 32px;
+        }
+
+        .leave-heading h1 {
+            font-size: 23px;
+        }
+
+        .leave-card-header,
+        .leave-card-body {
+            padding: 22px 18px;
+        }
+
+        .leave-grid {
+            grid-template-columns: 1fr;
+            gap: 0;
+        }
+
+        .leave-actions {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .leave-btn {
+            width: 100%;
+            box-sizing: border-box;
+        }
+    }
+</style>
+
+<div class="leave-page">
+
+    <div class="leave-heading">
+        <h1>Yeni İzin Talebi</h1>
+        <p>
+            @(yonetici
+                ? "Personel adına yeni bir izin talebi oluşturun."
+                : "İzin tarihlerinizi belirleyerek talebinizi yöneticinize iletin.")
+        </p>
+    </div>
+
+    <div class="leave-card">
+
+        <div class="leave-card-header">
+            <h2>İzin Bilgileri</h2>
+            <p>Lütfen aşağıdaki alanları eksiksiz doldurun.</p>
+        </div>
+
+        <div class="leave-card-body">
+
+            <form asp-controller="IzinTalepleri"
+                  asp-action="Create"
+                  method="post">
+
+                <div asp-validation-summary="ModelOnly"
+                     class="leave-error"></div>
+
+                @if (!yonetici)
+                {
+                    <div class="leave-notice">
+                        <span class="leave-notice-icon">ⓘ</span>
+                        <span>
+                            Bu izin talebi, giriş yaptığınız personel
+                            hesabına otomatik olarak bağlanacaktır.
+                            Talebiniz yönetici onayına gönderilecektir.
+                        </span>
+                    </div>
+                }
+                else
+                {
+                    <div class="leave-field">
+                        <label asp-for="PersonelId"
+                               class="leave-label">
+                            Personel Seçimi
+                        </label>
+
+                        <select asp-for="PersonelId"
+                                class="leave-input">
+                            <option value="">
+                                Personel seçiniz...
+                            </option>
+
+                            @if (ViewBag.Personeller != null)
+                            {
+                                foreach (var personel in ViewBag.Personeller)
+                                {
+                                    <option value="@personel.Id">
+                                        @personel.Ad @personel.Soyad
+                                    </option>
+                                }
+                            }
+                        </select>
+
+                        <span asp-validation-for="PersonelId"
+                              class="leave-error"></span>
+                    </div>
+                }
+
+                <div class="leave-grid">
+
+                    <div class="leave-field">
+                        <label asp-for="BaslangicTarihi"
+                               class="leave-label">
+                            Başlangıç Tarihi
+                        </label>
+
+                        <input asp-for="BaslangicTarihi"
+                               type="date"
+                               min="@bugun"
+                               class="leave-input" />
+
+                        <span asp-validation-for="BaslangicTarihi"
+                              class="leave-error"></span>
+                    </div>
+
+                    <div class="leave-field">
+                        <label asp-for="BitisTarihi"
+                               class="leave-label">
+                            Bitiş Tarihi
+                        </label>
+
+                        <input asp-for="BitisTarihi"
+                               type="date"
+                               min="@bugun"
+                               class="leave-input" />
+
+                        <span asp-validation-for="BitisTarihi"
+                              class="leave-error"></span>
+                    </div>
+
+                </div>
+
+                <div class="leave-field">
+                    <label asp-for="IzinNedeni"
+                           class="leave-label">
+                        İzin Nedeni
+                    </label>
+
+                    <textarea asp-for="IzinNedeni"
+                              class="leave-input"
+                              rows="5"
+                              maxlength="1000"
+                              placeholder="İzin talebinizin nedenini kısaca açıklayın..."></textarea>
+
+                    <div class="leave-help">
+                        İzin talebinizle ilgili kısa bir açıklama yazın.
+                    </div>
+
+                    <span asp-validation-for="IzinNedeni"
+                          class="leave-error"></span>
+                </div>
+
+                <div class="leave-actions">
+
+                    <button type="submit"
+                            class="leave-btn leave-btn-primary">
+                        İzin Talebi Oluştur
+                    </button>
+
+                    <a asp-controller="IzinTalepleri"
+                       asp-action="Index"
+                       class="leave-btn leave-btn-secondary">
+                        Vazgeç
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

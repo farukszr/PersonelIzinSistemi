@@ -1,0 +1,1323 @@
+@{
+    ViewData["Title"] = "Personel Yönetimi";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Personel ve izin süreçlerinizi tek platformdan yönetin." />
+    <title>Personel Yönetimi | Akıllı Personel ve İzin Takibi</title>
+
+    <style>
+            :root {
+                --navy: #101d36;
+                --purple: #6265f5;
+                --purple-dark: #4d50db;
+                --ink: #192640;
+                --muted: #78869f;
+                --line: #e8ecf5;
+                --surface: #f5f7fc;
+            }
+
+            * {
+                box-sizing: border-box;
+            }
+
+            html {
+                scroll-behavior: smooth;
+            }
+
+            body {
+                margin: 0;
+                font-family: "Segoe UI", Arial, sans-serif;
+                color: var(--ink);
+                background: white;
+                -webkit-font-smoothing: antialiased;
+            }
+
+            a {
+                text-decoration: none;
+            }
+
+            .container {
+                max-width: 1200px;
+                margin: auto;
+                padding-left: 24px;
+                padding-right: 24px;
+            }
+
+            .navbar {
+                position: sticky;
+                top: 0;
+                z-index: 100;
+                background: rgba(255,255,255,.96);
+                border-bottom: 1px solid var(--line);
+                backdrop-filter: blur(18px);
+            }
+
+            .nav-inner {
+                min-height: 82px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 20px;
+            }
+
+            .logo {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                color: var(--navy);
+                font-size: 20px;
+                font-weight: 800;
+                letter-spacing: -.7px;
+            }
+
+            .logo-mark {
+                width: 42px;
+                height: 42px;
+                border-radius: 12px;
+                background: linear-gradient(135deg,#8386ff,#4c50db);
+                color: white;
+                display: grid;
+                place-items: center;
+                font-size: 25px;
+                box-shadow: 0 5px 15px #6265f52e;
+            }
+
+            .nav-links {
+                display: flex;
+                align-items: center;
+                gap: 32px;
+            }
+
+                .nav-links > a:not(.button) {
+                    color: #64728b;
+                    font-size: 14px;
+                    font-weight: 600;
+                }
+
+                .nav-links > a:hover {
+                    color: var(--purple);
+                }
+
+            .button {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 9px;
+                border-radius: 11px;
+                padding: 15px 23px;
+                font-size: 14px;
+                font-weight: 700;
+                transition: transform .2s, background .2s, box-shadow .2s;
+                cursor: pointer;
+            }
+
+                .button:hover {
+                    transform: translateY(-2px);
+                }
+
+            .button-primary {
+                color: white !important;
+                background: var(--purple);
+                box-shadow: 0 8px 20px #6265f52b;
+            }
+
+                .button-primary:hover {
+                    background: var(--purple-dark);
+                }
+
+            .button-light {
+                color: #34415a;
+                background: white;
+                border: 1px solid #dfe5f0;
+            }
+
+                .button-light:hover {
+                    border-color: var(--purple);
+                    color: var(--purple);
+                }
+
+            /* HERO */
+
+            .hero {
+                position: relative;
+                overflow: hidden;
+                background: radial-gradient(ellipse at 85% 20%, #e8e9ff 0%, transparent 43%), linear-gradient(180deg,#f7f8ff 0%,#fff 100%);
+                padding: 104px 0 100px;
+            }
+
+            .hero-grid {
+                display: grid;
+                grid-template-columns: 1fr 1.12fr;
+                align-items: center;
+                gap: 65px;
+            }
+
+            .pill {
+                display: inline-flex;
+                align-items: center;
+                gap: 9px;
+                background: #ebedff;
+                color: #5659df;
+                padding: 10px 15px;
+                border-radius: 50px;
+                font-size: 12px;
+                font-weight: 750;
+                letter-spacing: .3px;
+            }
+
+            .pill-dot {
+                width: 7px;
+                height: 7px;
+                border-radius: 50%;
+                background: var(--purple);
+            }
+
+            .hero h1 {
+                margin: 26px 0 22px;
+                font-size: clamp(39px,4.7vw,62px);
+                line-height: 1.12;
+                letter-spacing: -2.5px;
+                font-weight: 800;
+                color: var(--navy);
+            }
+
+            .gradient-text {
+                background: linear-gradient(100deg,#6265f5,#9a6bdf);
+                -webkit-background-clip: text;
+                background-clip: text;
+                color: transparent;
+            }
+
+            .hero-description {
+                font-size: 16px;
+                line-height: 1.95;
+                color: var(--muted);
+                max-width: 490px;
+                margin-bottom: 32px;
+            }
+
+            .hero-actions {
+                display: flex;
+                gap: 12px;
+                flex-wrap: wrap;
+            }
+
+            .hero-note {
+                margin-top: 28px;
+                font-size: 12px;
+                color: #8b98ae;
+            }
+
+            /* DASHBOARD PREVIEW */
+
+            .dashboard {
+                border-radius: 17px;
+                background: #fff;
+                box-shadow: 0 35px 90px rgba(31,44,95,.14);
+                border: 1px solid #e2e7f3;
+                overflow: hidden;
+                transform: perspective(1300px) rotateY(-4deg) rotateX(2deg);
+                transition: transform .4s;
+            }
+
+                .dashboard:hover {
+                    transform: none;
+                }
+
+            .dashboard-top {
+                height: 34px;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                padding: 0 14px;
+                background: #f9faff;
+                border-bottom: 1px solid var(--line);
+            }
+
+            .window-dot {
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background: #dce1ed;
+            }
+
+            .dashboard-body {
+                display: grid;
+                grid-template-columns: 115px minmax(0,1fr);
+                min-height: 345px;
+            }
+
+            .dashboard-sidebar {
+                background: var(--navy);
+                color: #fff;
+                padding: 18px 10px;
+            }
+
+            .dashboard-brand {
+                font-size: 11px;
+                font-weight: 800;
+                margin-bottom: 29px;
+                padding-left: 5px;
+            }
+
+                .dashboard-brand span {
+                    color: #9198ff;
+                }
+
+            .dashboard-menu {
+                padding: 11px 8px;
+                font-size: 9px;
+                color: #a8b6d2;
+                border-radius: 6px;
+                margin-bottom: 7px;
+            }
+
+                .dashboard-menu.active {
+                    color: white;
+                    background: #2e4071;
+                }
+
+            .dashboard-main {
+                background: #f4f6fb;
+                padding: 23px 20px;
+                min-width: 0;
+            }
+
+            .preview-eyebrow {
+                color: #7b80f4;
+                font-size: 8px;
+                letter-spacing: 1.5px;
+                font-weight: 800;
+            }
+
+            .dashboard-main h3 {
+                margin: 9px 0 20px;
+                font-size: 19px;
+                letter-spacing: -.5px;
+            }
+
+            .preview-stats {
+                display: grid;
+                grid-template-columns: repeat(3,minmax(0,1fr));
+                gap: 9px;
+            }
+
+            .preview-stat {
+                background: #fff;
+                border: 1px solid var(--line);
+                border-radius: 10px;
+                padding: 15px 11px;
+                min-width: 0;
+            }
+
+            .preview-stat-icon {
+                width: 27px;
+                height: 27px;
+                display: grid;
+                place-items: center;
+                border-radius: 7px;
+                background: #e9edff;
+                color: var(--purple);
+                font-size: 13px;
+                margin-bottom: 15px;
+            }
+
+            .preview-stat-label {
+                font-size: 9px;
+                color: var(--muted);
+                margin-bottom: 7px;
+            }
+
+            .preview-stat-number {
+                font-size: 22px;
+                font-weight: 800;
+                color: var(--navy);
+            }
+
+            .preview-table {
+                background: white;
+                border: 1px solid var(--line);
+                border-radius: 10px;
+                margin-top: 15px;
+                overflow: hidden;
+            }
+
+            .preview-table-title {
+                font-size: 11px;
+                font-weight: 750;
+                padding: 14px;
+                border-bottom: 1px solid var(--line);
+            }
+
+            .preview-row {
+                display: grid;
+                grid-template-columns: 1.2fr 1fr .7fr;
+                align-items: center;
+                gap: 8px;
+                padding: 12px 14px;
+                font-size: 9px;
+                border-bottom: 1px solid #f1f3f8;
+            }
+
+                .preview-row:last-child {
+                    border: none;
+                }
+
+            .preview-tag {
+                color: #6265f5;
+                background: #eff0ff;
+                border-radius: 5px;
+                padding: 5px;
+                width: fit-content;
+            }
+
+            .preview-status {
+                color: #12a878;
+                font-weight: 700;
+            }
+
+            /* SECTIONS */
+
+            .section {
+                padding: 105px 0;
+            }
+
+            .section-alt {
+                background: var(--surface);
+            }
+
+            .section-header {
+                max-width: 660px;
+                text-align: center;
+                margin: 0 auto 55px;
+            }
+
+            .section-kicker {
+                color: var(--purple);
+                font-size: 12px;
+                font-weight: 800;
+                letter-spacing: 1.8px;
+                text-transform: uppercase;
+            }
+
+            .section-header h2 {
+                font-size: clamp(29px,3.5vw,43px);
+                letter-spacing: -1.5px;
+                margin: 17px 0;
+                line-height: 1.2;
+            }
+
+            .section-header p {
+                color: var(--muted);
+                font-size: 15px;
+                line-height: 1.85;
+            }
+
+            .features {
+                display: grid;
+                grid-template-columns: repeat(3,1fr);
+                gap: 22px;
+            }
+
+            .feature {
+                background: #fff;
+                border: 1px solid var(--line);
+                border-radius: 17px;
+                padding: 33px;
+                transition: transform .25s, box-shadow .25s;
+            }
+
+                .feature:hover {
+                    transform: translateY(-6px);
+                    box-shadow: 0 18px 40px #263c6410;
+                }
+
+            .feature-icon {
+                width: 53px;
+                height: 53px;
+                display: grid;
+                place-items: center;
+                border-radius: 14px;
+                background: #eff0ff;
+                color: var(--purple);
+                font-size: 24px;
+                margin-bottom: 25px;
+            }
+
+            .feature h3 {
+                font-size: 18px;
+                margin: 0 0 13px;
+            }
+
+            .feature p {
+                font-size: 14px;
+                color: var(--muted);
+                line-height: 1.85;
+                margin: 0;
+            }
+
+            /* HOW IT WORKS */
+
+            .steps {
+                display: grid;
+                grid-template-columns: repeat(3,1fr);
+                gap: 25px;
+            }
+
+            .step {
+                text-align: center;
+                padding: 20px;
+            }
+
+            .step-number {
+                width: 60px;
+                height: 60px;
+                display: grid;
+                place-items: center;
+                margin: 0 auto 23px;
+                background: #eceeff;
+                color: var(--purple);
+                border-radius: 18px;
+                font-size: 21px;
+                font-weight: 800;
+            }
+
+            .step h3 {
+                font-size: 18px;
+            }
+
+            .step p {
+                font-size: 14px;
+                line-height: 1.8;
+                color: var(--muted);
+            }
+
+            /* CTA */
+
+            .cta-section {
+                padding: 35px 24px 90px;
+            }
+
+            .cta-box {
+                max-width: 1152px;
+                margin: auto;
+                padding: 75px 30px;
+                text-align: center;
+                background: radial-gradient(circle at 80% 0%,#344477 0%,transparent 45%), #111f3c;
+                border-radius: 24px;
+                color: white;
+            }
+
+                .cta-box h2 {
+                    font-size: clamp(28px,4vw,42px);
+                    letter-spacing: -1px;
+                    margin: 0 0 18px;
+                }
+
+                .cta-box p {
+                    color: #b8c5df;
+                    font-size: 15px;
+                    line-height: 1.8;
+                    margin-bottom: 30px;
+                }
+
+            .footer {
+                border-top: 1px solid var(--line);
+                padding: 35px 0;
+            }
+
+            .footer-inner {
+                display: flex;
+                justify-content: space-between;
+                gap: 20px;
+                align-items: center;
+                color: #8b98ad;
+                font-size: 12px;
+            }
+
+            @@media (max-width: 1000px) {
+                .hero-grid {
+                    grid-template-columns: 1fr;
+                    gap: 55px;
+                }
+
+                .hero-content {
+                    text-align: center;
+                }
+
+                .hero-description {
+                    margin-left: auto;
+                    margin-right: auto;
+                }
+
+                .hero-actions {
+                    justify-content: center;
+                }
+
+                .dashboard {
+                    max-width: 700px;
+                    margin: auto;
+                    transform: none;
+                }
+            }
+
+            @@media (max-width: 700px) {
+                .nav-inner {
+                    min-height: 72px;
+                }
+
+                .logo {
+                    font-size: 16px;
+                }
+
+                .logo-mark {
+                    width: 36px;
+                    height: 36px;
+                }
+
+                .nav-links {
+                    gap: 10px;
+                }
+
+                    .nav-links > a:not(.button) {
+                        display: none;
+                    }
+
+                    .nav-links .button {
+                        padding: 11px 13px;
+                        font-size: 12px;
+                    }
+
+                .hero {
+                    padding: 70px 0;
+                }
+
+                    .hero h1 {
+                        letter-spacing: -1.5px;
+                    }
+
+                .section {
+                    padding: 75px 0;
+                }
+
+                .features, .steps {
+                    grid-template-columns: 1fr;
+                }
+
+                .dashboard-body {
+                    grid-template-columns: 75px minmax(0,1fr);
+                }
+
+                .dashboard-sidebar {
+                    padding: 14px 5px;
+                }
+
+                .dashboard-brand {
+                    font-size: 8px;
+                }
+
+                .dashboard-menu {
+                    font-size: 7px;
+                    padding: 9px 4px;
+                }
+
+                .dashboard-main {
+                    padding: 16px 10px;
+                }
+
+                .preview-stats {
+                    gap: 5px;
+                }
+
+                .preview-stat {
+                    padding: 10px 6px;
+                }
+
+                .preview-stat-number {
+                    font-size: 17px;
+                }
+
+                .preview-stat-label {
+                    font-size: 8px;
+                }
+
+                .preview-row {
+                    padding: 10px 7px;
+                    font-size: 8px;
+                }
+
+                .footer-inner {
+                    flex-direction: column;
+                    text-align: center;
+                }
+            }
+
+            @@media (prefers-reduced-motion: reduce) {
+                html {
+                    scroll-behavior: auto;
+                }
+
+                *, *::before, *::after {
+                    transition: none !important;
+                }
+            }
+
+            /* PREMIUM LANDING PAGE IMPROVEMENTS */
+
+            .feature-icon svg {
+                width: 25px;
+                height: 25px;
+                stroke: currentColor;
+                fill: none;
+                stroke-width: 1.8;
+                stroke-linecap: round;
+                stroke-linejoin: round;
+            }
+
+            .workflow {
+                display: grid;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 26px;
+                position: relative;
+            }
+
+                .workflow::before {
+                    content: "";
+                    position: absolute;
+                    top: 43px;
+                    left: 16%;
+                    right: 16%;
+                    height: 2px;
+                    background: linear-gradient( 90deg, #d9dcff, #7779f5, #d9dcff );
+                }
+
+            .workflow-card {
+                position: relative;
+                z-index: 1;
+                padding: 30px 24px;
+                text-align: center;
+                background: #fff;
+                border: 1px solid #e8ecf5;
+                border-radius: 18px;
+                transition: transform .25s, box-shadow .25s;
+            }
+
+                .workflow-card:hover {
+                    transform: translateY(-5px);
+                    box-shadow: 0 16px 36px rgba(30, 45, 90, .08);
+                }
+
+            .workflow-icon {
+                width: 76px;
+                height: 76px;
+                margin: 0 auto 24px;
+                display: grid;
+                place-items: center;
+                background: #eeefff;
+                border: 7px solid #fff;
+                border-radius: 22px;
+                color: #6265f5;
+            }
+
+                .workflow-icon svg {
+                    width: 31px;
+                    height: 31px;
+                    fill: none;
+                    stroke: currentColor;
+                    stroke-width: 1.7;
+                    stroke-linecap: round;
+                    stroke-linejoin: round;
+                }
+
+            .workflow-number {
+                display: inline-block;
+                margin-bottom: 10px;
+                color: #6265f5;
+                font-size: 12px;
+                font-weight: 800;
+                letter-spacing: 1px;
+            }
+
+            .workflow-card h3 {
+                font-size: 18px;
+                margin: 8px 0 13px;
+            }
+
+            .workflow-card p {
+                color: #78869f;
+                font-size: 14px;
+                line-height: 1.85;
+                margin: 0;
+            }
+
+            .faq-section {
+                background: #f5f7fc;
+            }
+
+            .faq-list {
+                max-width: 800px;
+                margin: auto;
+                display: grid;
+                gap: 14px;
+            }
+
+            .faq-item {
+                background: #fff;
+                border: 1px solid #e8ecf5;
+                border-radius: 14px;
+                overflow: hidden;
+            }
+
+                .faq-item summary {
+                    list-style: none;
+                    padding: 23px 26px;
+                    cursor: pointer;
+                    font-size: 15px;
+                    font-weight: 700;
+                    color: #192640;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    gap: 16px;
+                }
+
+                    .faq-item summary::-webkit-details-marker {
+                        display: none;
+                    }
+
+                    .faq-item summary::after {
+                        content: "+";
+                        color: #6265f5;
+                        font-size: 23px;
+                        font-weight: 400;
+                    }
+
+                .faq-item[open] summary::after {
+                    content: "−";
+                }
+
+                .faq-item p {
+                    margin: 0;
+                    padding: 0 26px 24px;
+                    color: #78869f;
+                    font-size: 14px;
+                    line-height: 1.85;
+                }
+
+            @@media (max-width: 768px) {
+                .workflow {
+                    grid-template-columns: 1fr;
+                }
+
+                    .workflow::before {
+                        display: none;
+                    }
+
+                .workflow-card {
+                    padding: 26px 20px;
+                }
+
+                .faq-item summary {
+                    padding: 20px;
+                }
+
+                .faq-item p {
+                    padding: 0 20px 20px;
+                }
+            }
+
+            /* HERO - MODERN PERSONEL YONETIMI ETIKETI */
+
+            .pill {
+                background: #6265f5;
+                color: #ffffff;
+                border: 1px solid #6265f5;
+                box-shadow: 0 7px 18px rgba(98, 101, 245, 0.17);
+            }
+
+                .pill svg {
+                    width: 15px;
+                    height: 15px;
+                    fill: none;
+                    stroke: #ffffff;
+                    stroke-width: 2;
+                    stroke-linecap: round;
+                    stroke-linejoin: round;
+                    flex-shrink: 0;
+                }
+
+            /* OZELLIK KARTLARI */
+
+            .feature-icon {
+                width: 53px;
+                height: 53px;
+                display: grid;
+                place-items: center;
+                border-radius: 14px;
+                background: #6265f5;
+                color: #ffffff;
+                margin-bottom: 25px;
+                box-shadow: 0 8px 20px rgba(98, 101, 245, 0.18);
+            }
+
+                .feature-icon svg {
+                    width: 25px;
+                    height: 25px;
+                    fill: none;
+                    stroke: #ffffff;
+                    stroke-width: 1.8;
+                    stroke-linecap: round;
+                    stroke-linejoin: round;
+                }
+
+            /* NASIL CALISIR - ADIM IKONLARI */
+
+            .workflow-icon {
+                width: 65px;
+                height: 65px;
+                display: grid;
+                place-items: center;
+                margin: 0 auto 22px;
+                border-radius: 18px;
+                background: #6265f5;
+                color: #ffffff;
+                box-shadow: 0 9px 22px rgba(98, 101, 245, 0.18);
+            }
+
+                .workflow-icon svg {
+                    width: 29px;
+                    height: 29px;
+                    fill: none;
+                    stroke: #ffffff;
+                    stroke-width: 1.8;
+                    stroke-linecap: round;
+                    stroke-linejoin: round;
+                }
+
+            /* IKONLARIN UZERINE GELINDIGINDE */
+
+            .feature:hover .feature-icon,
+            .workflow-card:hover .workflow-icon {
+                background: #5053db;
+                box-shadow: 0 12px 25px rgba(98, 101, 245, 0.25);
+            }
+
+    </style>
+</head>
+
+<body>
+
+    <header class="navbar">
+        <div class="container nav-inner">
+            <a asp-controller="AnaSayfa" asp-action="Index" class="logo">
+                <span class="logo-mark">P</span>
+                Personel Yönetimi
+            </a>
+
+            <nav class="nav-links" aria-label="Ana menü">
+                <a href="#ozellikler">Özellikler</a>
+                <a href="#nasil-calisir">Nasıl Çalışır?</a>
+                <a asp-controller="@(User.Identity?.IsAuthenticated == true ? (User.IsInRole("Yonetici") ? "Home" : "IzinTalepleri") : "Hesap")"
+                   asp-action="@(User.Identity?.IsAuthenticated == true ? "Index" : "Giris")"
+                   class="button button-primary">
+                    @(User.Identity?.IsAuthenticated == true ? "Panele Dön" : "Giriş Yap") <span aria-hidden="true">→</span>
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+
+        <section class="hero">
+            <div class="container hero-grid">
+
+                <div class="hero-content">
+
+                    <div class="pill">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="m12 3 1.9 6.1L20 11l-6.1 1.9L12 19l-1.9-6.1L4 11l6.1-1.9L12 3Z" />
+                            <path d="m19 17 .7 1.3L21 19l-1.3.7L19 21l-.7-1.3L17 19l1.3-.7L19 17Z" />
+                        </svg>
+                        MODERN PERSONEL YÖNETİM SİSTEMİ
+                    </div>
+
+
+                    <h1>
+                        Ekibinizi yönetin.<br />
+                        Süreçlerinizi
+                        <span class="gradient-text">kolaylaştırın.</span>
+                    </h1>
+
+                    <p class="hero-description">
+                        Personel bilgileri, izin talepleri ve yönetici
+                        onayları artık tek bir yerde. İş süreçlerinizi
+                        daha düzenli, hızlı ve güvenli yönetin.
+                    </p>
+
+                    <div class="hero-actions">
+                        <a asp-controller="@(User.Identity?.IsAuthenticated == true ? (User.IsInRole("Yonetici") ? "Home" : "IzinTalepleri") : "Hesap")"
+                           asp-action="@(User.Identity?.IsAuthenticated == true ? "Index" : "Giris")"
+                           class="button button-primary">
+                            @(User.Identity?.IsAuthenticated == true ? "Panele Dön →" : "Sisteme Giriş Yap →")
+                        </a>
+
+                        <a href="#ozellikler" class="button button-light">
+                            Özellikleri Keşfet
+                        </a>
+                    </div>
+
+                    <div class="hero-note">
+                        ✓ Rol bazlı erişim &nbsp; ✓ Merkezi yönetim
+                        &nbsp; ✓ Kolay izin takibi
+                    </div>
+                </div>
+
+                <div class="dashboard" aria-label="Temsili yönetim paneli önizlemesi">
+
+                    <div class="dashboard-top">
+                        <span class="window-dot"></span>
+                        <span class="window-dot"></span>
+                        <span class="window-dot"></span>
+                    </div>
+
+                    <div class="dashboard-body">
+                        <aside class="dashboard-sidebar">
+                            <div class="dashboard-brand">
+                                P <span>Personel Yönetimi</span>
+                            </div>
+
+                            <div class="dashboard-menu active">▦ Genel Bakış</div>
+                            <div class="dashboard-menu">♙ Personeller</div>
+                            <div class="dashboard-menu">♙ Kullanıcılar</div>
+                            <div class="dashboard-menu">▤ İzin Talepleri</div>
+                        </aside>
+
+                        <div class="dashboard-main">
+                            <div class="preview-eyebrow">YÖNETİM PANELİ</div>
+                            <h3>Genel Bakış ✦</h3>
+
+                            <div class="preview-stats">
+                                <div class="preview-stat">
+                                    <div class="preview-stat-icon">♙</div>
+                                    <div class="preview-stat-label">Personel</div>
+                                    <div class="preview-stat-number">24</div>
+                                </div>
+
+                                <div class="preview-stat">
+                                    <div class="preview-stat-icon">▦</div>
+                                    <div class="preview-stat-label">Departman</div>
+                                    <div class="preview-stat-number">5</div>
+                                </div>
+
+                                <div class="preview-stat">
+                                    <div class="preview-stat-icon">◷</div>
+                                    <div class="preview-stat-label">İzin Talebi</div>
+                                    <div class="preview-stat-number">8</div>
+                                </div>
+                            </div>
+
+                            <div class="preview-table">
+                                <div class="preview-table-title">
+                                    Son Eklenen Personeller
+                                </div>
+
+                                <div class="preview-row">
+                                    <strong>Örnek Personel A</strong>
+                                    <span class="preview-tag">Yazılım</span>
+                                    <span class="preview-status">Aktif</span>
+                                </div>
+
+                                <div class="preview-row">
+                                    <strong>Örnek Personel B</strong>
+                                    <span class="preview-tag">Muhasebe</span>
+                                    <span class="preview-status">Aktif</span>
+                                </div>
+
+                                <div class="preview-row">
+                                    <strong>Örnek Personel C</strong>
+                                    <span class="preview-tag">İK</span>
+                                    <span class="preview-status">Aktif</span>
+                                </div>
+                            </div>
+
+                            <p style="font-size:9px;color:#98a3b8;margin-top:12px">
+                                * Temsili panel verileridir.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="section section-alt" id="ozellikler">
+            <div class="container">
+
+                <div class="section-header">
+                    <div class="section-kicker">ÖZELLİKLER</div>
+                    <h2>İnsan kaynakları süreçleri tek platformda</h2>
+                    <p>
+                        Günlük personel işlemlerini kolaylaştıran,
+                        kullanımı anlaşılır ve merkezi bir yönetim deneyimi.
+                    </p>
+                </div>
+
+                <div class="features">
+
+                    <article class="feature">
+                        <div class="feature-icon">♙</div>
+                        <h3>Personel Yönetimi</h3>
+                        <p>
+                            Personel kayıtlarını oluşturun, güncelleyin
+                            ve çalışan bilgilerine tek panelden ulaşın.
+                        </p>
+                    </article>
+
+                    <article class="feature">
+                        <div class="feature-icon">▦</div>
+                        <h3>İzin Talep Takibi</h3>
+                        <p>
+                            Çalışanlar izin talebi oluşturabilir,
+                            yöneticiler başvuruları değerlendirebilir.
+                        </p>
+                    </article>
+
+                    <article class="feature">
+                        <div class="feature-icon">♢</div>
+                        <h3>Rol Bazlı Yetkilendirme</h3>
+                        <p>
+                            Yönetici ve personel hesaplarıyla
+                            kullanıcıların erişim yetkilerini ayırın.
+                        </p>
+                    </article>
+
+                    <article class="feature">
+                        <div class="feature-icon">▤</div>
+                        <h3>Yönetim Paneli</h3>
+                        <p>
+                            Personel, departman ve izin bilgilerini
+                            anlaşılır bir genel bakış ekranında takip edin.
+                        </p>
+                    </article>
+
+                    <article class="feature">
+                        <div class="feature-icon">◎</div>
+                        <h3>Kullanıcı Hesapları</h3>
+                        <p>
+                            Personeller için sisteme giriş hesapları
+                            oluşturun ve kullanıcıları yönetin.
+                        </p>
+                    </article>
+
+                    <article class="feature">
+                        <div class="feature-icon">◈</div>
+                        <h3>Merkezi Veri Yönetimi</h3>
+                        <p>
+                            SQL Server altyapısıyla personel ve izin
+                            kayıtlarını merkezi olarak saklayın.
+                        </p>
+                    </article>
+
+                </div>
+            </div>
+        </section>
+
+        
+        <section class="section" id="nasil-calisir">
+            <div class="container">
+
+                <div class="section-header">
+                    <div class="section-kicker">NASIL ÇALIŞIR?</div>
+
+                    <h2>İzin yönetimi artık çok daha kolay</h2>
+
+                    <p>
+                        Personel hesabından yönetici onayına kadar
+                        tüm süreç tek platform üzerinden ilerler.
+                    </p>
+                </div>
+
+                <div class="workflow">
+
+                    <article class="workflow-card">
+                        <div class="workflow-icon">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                                <circle cx="9" cy="7" r="4" />
+                                <path d="M19 8v6M16 11h6" />
+                            </svg>
+                        </div>
+
+                        <span class="workflow-number">ADIM 01</span>
+
+                        <h3>Personel Hesabı Oluştur</h3>
+
+                        <p>
+                            Yönetici, çalışan için kullanıcı hesabı
+                            oluşturur ve sisteme erişim sağlar.
+                        </p>
+                    </article>
+
+                    <article class="workflow-card">
+                        <div class="workflow-icon">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <rect x="3" y="5" width="18" height="16" rx="2" />
+                                <path d="M16 3v4M8 3v4M3 10h18" />
+                                <path d="m9 16 2 2 4-4" />
+                            </svg>
+                        </div>
+
+                        <span class="workflow-number">ADIM 02</span>
+
+                        <h3>İzin Talebi Gönder</h3>
+
+                        <p>
+                            Personel, izin tarihlerini ve açıklamasını
+                            belirleyerek talebini yöneticisine iletir.
+                        </p>
+                    </article>
+
+                    <article class="workflow-card">
+                        <div class="workflow-icon">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" />
+                                <path d="m9 12 2 2 4-4" />
+                            </svg>
+                        </div>
+
+                        <span class="workflow-number">ADIM 03</span>
+
+                        <h3>Yönetici Değerlendirsin</h3>
+
+                        <p>
+                            Yönetici talebi onaylar veya reddeder.
+                            Çalışan, talebinin güncel durumunu takip eder.
+                        </p>
+                    </article>
+
+                </div>
+            </div>
+        </section>
+
+        
+        <section class="section faq-section" id="sss">
+            <div class="container">
+
+                <div class="section-header">
+                    <div class="section-kicker">
+                        SIK SORULAN SORULAR
+                    </div>
+
+                    <h2>Merak ettikleriniz</h2>
+
+                    <p>
+                        Personel Yönetim Sistemi hakkında
+                        en çok merak edilen konular.
+                    </p>
+                </div>
+
+                <div class="faq-list">
+
+                    <details class="faq-item">
+                        <summary>
+                            Personel Yönetim Sistemi nedir?
+                        </summary>
+                        <p>
+                            Personel bilgilerini yönetmek,
+                            izin taleplerini oluşturmak ve
+                            yönetici onay süreçlerini takip etmek
+                            için geliştirilmiş web uygulamasıdır.
+                        </p>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary>
+                            Personeller sisteme nasıl giriş yapar?
+                        </summary>
+                        <p>
+                            Yönetici tarafından oluşturulan
+                            kullanıcı hesabıyla sisteme giriş
+                            yapabilirler.
+                        </p>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary>
+                            İzin talepleri nasıl onaylanır?
+                        </summary>
+                        <p>
+                            Personelin oluşturduğu izin talebi
+                            yönetici tarafından incelenir.
+                            Yönetici talebi onaylayabilir
+                            veya reddedebilir.
+                        </p>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary>
+                            Personeller yönetici paneline erişebilir mi?
+                        </summary>
+                        <p>
+                            Hayır. Yönetici ve personel rolleri
+                            ayrı yetkilere sahiptir.
+                            Personel kullanıcıları yöneticiye
+                            özel sayfalara erişemez.
+                        </p>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary>
+                            Hangi teknolojiler kullanılıyor?
+                        </summary>
+                        <p>
+                            Uygulama ASP.NET Core MVC,
+                            C#, Entity Framework Core,
+                            ASP.NET Core Identity ve
+                            SQL Server teknolojileriyle
+                            geliştirilmiştir.
+                        </p>
+                    </details>
+
+                </div>
+            </div>
+        </section>
+
+        <section class="cta-section">
+            <div class="cta-box">
+                <h2>Ekibinizi yönetmenin daha kolay yolu.</h2>
+                <p>
+                    Personel ve izin süreçlerini düzenli bir
+                    şekilde yönetmeye başlayın.
+                </p>
+
+                <a asp-controller="@(User.Identity?.IsAuthenticated == true ? (User.IsInRole("Yonetici") ? "Home" : "IzinTalepleri") : "Hesap")"
+                   asp-action="@(User.Identity?.IsAuthenticated == true ? "Index" : "Giris")"
+                   class="button button-primary">
+                    @(User.Identity?.IsAuthenticated == true ? "Panele Dön →" : "Sisteme Giriş Yap →")
+                </a>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-inner">
+            <div>
+                © @DateTime.Now.Year Personel Yönetimi.
+                Tüm hakları saklıdır.
+            </div>
+
+            <div>
+                ASP.NET Core MVC · Entity Framework Core · SQL Server
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

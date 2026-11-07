@@ -1,0 +1,455 @@
+@model PersonelIzinSistemi.ViewModels.HesapOlusturViewModel
+
+@{
+    ViewData["Title"] = "Personel Hesabı Oluştur";
+}
+
+<style>
+    .account-page {
+        max-width: 850px;
+        margin: 0 auto;
+        padding: 24px 0 48px;
+    }
+
+    .account-heading {
+        margin-bottom: 28px;
+    }
+
+        .account-heading h1 {
+            font-size: 28px;
+            font-weight: 750;
+            letter-spacing: -.5px;
+            color: #17233b;
+            margin: 0 0 10px;
+        }
+
+        .account-heading p {
+            color: #7b879e;
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+    .account-card {
+        background: #fff;
+        border: 1px solid #e8ecf5;
+        border-radius: 18px;
+        box-shadow: 0 8px 35px rgba(30,45,90,.045);
+        overflow: hidden;
+    }
+
+    .account-card-header {
+        padding: 26px 32px;
+        border-bottom: 1px solid #edf0f6;
+    }
+
+        .account-card-header h2 {
+            font-size: 17px;
+            font-weight: 700;
+            color: #1e293b;
+            margin: 0 0 6px;
+        }
+
+        .account-card-header p {
+            color: #8a94a8;
+            font-size: 13px;
+            margin: 0;
+        }
+
+    .account-card-body {
+        padding: 32px;
+    }
+
+    .account-notice {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        background: #f0f3ff;
+        border: 1px solid #e1e6ff;
+        border-radius: 12px;
+        padding: 15px 18px;
+        color: #5364a5;
+        font-size: 13px;
+        line-height: 1.6;
+        margin-bottom: 28px;
+    }
+
+    .account-field {
+        margin-bottom: 25px;
+    }
+
+    .account-label {
+        display: block;
+        font-size: 13px;
+        font-weight: 650;
+        color: #344054;
+        margin-bottom: 9px;
+    }
+
+    .account-input {
+        display: block;
+        box-sizing: border-box;
+        width: 100%;
+        min-height: 48px;
+        padding: 12px 15px;
+        border: 1px solid #dfe4ee;
+        border-radius: 10px;
+        background: #fff;
+        color: #27344d;
+        font-size: 14px;
+        font-family: inherit;
+        outline: none;
+        transition: border-color .2s, box-shadow .2s;
+    }
+
+        .account-input:focus {
+            border-color: #6265f4;
+            box-shadow: 0 0 0 4px rgba(98,101,244,.10);
+        }
+
+        .account-input::placeholder {
+            color: #a0a9b9;
+        }
+
+    .account-password-wrap {
+        position: relative;
+    }
+
+        .account-password-wrap .account-input {
+            padding-right: 100px;
+        }
+
+    .account-toggle {
+        position: absolute;
+        right: 9px;
+        top: 50%;
+        transform: translateY(-50%);
+        border: 0;
+        background: #f2f4f9;
+        color: #53617a;
+        border-radius: 7px;
+        padding: 8px 12px;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+        .account-toggle:hover {
+            background: #e7eaf4;
+        }
+
+    .account-help {
+        font-size: 12px;
+        color: #98a2b3;
+        margin-top: 8px;
+        line-height: 1.6;
+    }
+
+    .account-error {
+        display: block;
+        color: #d92d20;
+        font-size: 12px;
+        margin-top: 7px;
+    }
+
+    .account-strength {
+        display: flex;
+        gap: 5px;
+        margin-top: 12px;
+    }
+
+        .account-strength span {
+            height: 5px;
+            flex: 1;
+            background: #e9edf4;
+            border-radius: 10px;
+            transition: background .2s;
+        }
+
+    .account-strength-text {
+        color: #98a2b3;
+        font-size: 12px;
+        margin-top: 8px;
+    }
+
+    .account-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding-top: 22px;
+        border-top: 1px solid #edf0f6;
+        margin-top: 8px;
+    }
+
+    .account-btn {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 46px;
+        padding: 0 22px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 650;
+        font-family: inherit;
+        text-decoration: none;
+        cursor: pointer;
+        transition: .2s;
+    }
+
+    .account-btn-primary {
+        background: #5d5fef;
+        color: white;
+        border: 1px solid #5d5fef;
+        box-shadow: 0 4px 12px rgba(93,95,239,.18);
+    }
+
+        .account-btn-primary:hover {
+            background: #494bd7;
+            color: white;
+        }
+
+    .account-btn-secondary {
+        background: #fff;
+        color: #667085;
+        border: 1px solid #e4e7ec;
+    }
+
+        .account-btn-secondary:hover {
+            background: #f8fafc;
+            color: #344054;
+        }
+
+    @@media (max-width: 600px) {
+        .account-page {
+            padding: 16px 0 32px;
+        }
+
+        .account-heading h1 {
+            font-size: 23px;
+        }
+
+        .account-card-header,
+        .account-card-body {
+            padding: 22px 18px;
+        }
+
+        .account-actions {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .account-btn {
+            width: 100%;
+            box-sizing: border-box;
+        }
+    }
+</style>
+
+<div class="account-page">
+
+    <div class="account-heading">
+        <h1>Personel Hesabı Oluştur</h1>
+        <p>
+            Sisteme erişim sağlayacak personel için
+            yeni bir kullanıcı hesabı tanımlayın.
+        </p>
+    </div>
+
+    <div class="account-card">
+
+        <div class="account-card-header">
+            <h2>Hesap Bilgileri</h2>
+            <p>Lütfen personel ve giriş bilgilerini doldurun.</p>
+        </div>
+
+        <div class="account-card-body">
+
+            <div class="account-notice">
+                <span aria-hidden="true">ⓘ</span>
+                <span>
+                    Oluşturulan hesap otomatik olarak
+                    <strong>Personel</strong> rolüne sahip olacaktır.
+                    Personel kendi izin taleplerini oluşturabilir
+                    ve takip edebilir.
+                </span>
+            </div>
+
+            <form asp-controller="Kullanicilar"
+                  asp-action="Create"
+                  method="post">
+
+                <div asp-validation-summary="ModelOnly"
+                     class="account-error"></div>
+
+                <div class="account-field">
+                    <label asp-for="PersonelId"
+                           class="account-label">
+                        Personel Seçimi
+                    </label>
+
+                    <select asp-for="PersonelId"
+                            asp-items="ViewBag.Personeller"
+                            class="account-input">
+                        <option value="0">
+                            Personel seçiniz...
+                        </option>
+                    </select>
+
+                    <span asp-validation-for="PersonelId"
+                          class="account-error"></span>
+
+                    <div class="account-help">
+                        Yalnızca henüz kullanıcı hesabı bulunmayan
+                        personeller listelenir.
+                    </div>
+                </div>
+
+                <div class="account-field">
+                    <label asp-for="Email"
+                           class="account-label">
+                        E-posta Adresi
+                    </label>
+
+                    <input asp-for="Email"
+                           type="email"
+                           class="account-input"
+                           autocomplete="off"
+                           placeholder="ornek@sirket.com" />
+
+                    <span asp-validation-for="Email"
+                          class="account-error"></span>
+                </div>
+
+                <div class="account-field">
+                    <label asp-for="Parola"
+                           class="account-label">
+                        Geçici Parola
+                    </label>
+
+                    <div class="account-password-wrap">
+
+                        <input asp-for="Parola"
+                               type="password"
+                               id="accountPassword"
+                               class="account-input"
+                               autocomplete="new-password"
+                               placeholder="Güçlü bir parola oluşturun" />
+
+                        <button type="button"
+                                class="account-toggle"
+                                id="toggleAccountPassword"
+                                aria-label="Parolayı göster"
+                                aria-pressed="false">
+                            Göster
+                        </button>
+                    </div>
+
+                    <span asp-validation-for="Parola"
+                          class="account-error"></span>
+
+                    <div class="account-strength"
+                         id="passwordStrength"
+                         aria-hidden="true">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+
+                    <div class="account-strength-text"
+                         id="passwordStrengthText"
+                         aria-live="polite">
+                        Henüz parola girilmedi
+                    </div>
+
+                    <div class="account-help">
+                        En az 10 karakter, büyük harf, küçük harf,
+                        rakam ve özel karakter içermelidir.
+                    </div>
+                </div>
+
+                <div class="account-actions">
+
+                    <button type="submit"
+                            class="account-btn account-btn-primary">
+                        Hesabı Oluştur
+                    </button>
+
+                    <a asp-controller="Kullanicilar"
+                       asp-action="Index"
+                       class="account-btn account-btn-secondary">
+                        Vazgeç
+                    </a>
+
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const password = document.getElementById("accountPassword");
+            const toggle = document.getElementById("toggleAccountPassword");
+            const strength = document.getElementById("passwordStrength");
+            const strengthText = document.getElementById("passwordStrengthText");
+
+            toggle.addEventListener("click", function () {
+                const show = password.type === "password";
+                password.type = show ? "text" : "password";
+                toggle.textContent = show ? "Gizle" : "Göster";
+                toggle.setAttribute("aria-pressed", String(show));
+                toggle.setAttribute(
+                    "aria-label",
+                    show ? "Parolayı gizle" : "Parolayı göster"
+                );
+            });
+
+            password.addEventListener("input", function () {
+                const value = password.value;
+
+                const checks = [
+                    value.length >= 10,
+                    /[a-z]/.test(value) && /[A-Z]/.test(value),
+                    /[0-9]/.test(value),
+                    /[^a-zA-Z0-9]/.test(value)
+                ];
+
+                const score = checks.filter(Boolean).length;
+                const bars = strength.querySelectorAll("span");
+
+                const colors = [
+                    "#e9edf4",
+                    "#ef4444",
+                    "#f59e0b",
+                    "#6366f1",
+                    "#16a34a"
+                ];
+
+                bars.forEach(function (bar, index) {
+                    bar.style.background =
+                        value.length && index < score
+                            ? colors[score]
+                            : "#e9edf4";
+                });
+
+                const labels = [
+                    "Henüz parola girilmedi",
+                    "Zayıf parola",
+                    "Geliştirilmeli",
+                    "İyi parola",
+                    "Parola koşulları karşılanıyor"
+                ];
+
+                strengthText.textContent =
+                    value.length ? labels[score] : labels[0];
+            });
+
+        });
+    </script>
+}

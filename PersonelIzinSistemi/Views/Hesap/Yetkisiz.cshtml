@@ -1,0 +1,375 @@
+@{
+    ViewData["Title"] = "Yetkisiz Erişim";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>403 | Erişim Engellendi - Personel Yönetimi</title>
+
+    <style>
+            :root {
+                --navy: #101d36;
+                --purple: #6265f5;
+                --purple-dark: #4e51db;
+                --ink: #1b2942;
+                --muted: #8491a6;
+                --line: #e5eaf3;
+            }
+
+            * {
+                box-sizing: border-box;
+            }
+
+            body {
+                margin: 0;
+                min-height: 100vh;
+                min-height: 100dvh;
+                font-family: "Segoe UI", Arial, sans-serif;
+                color: var(--ink);
+                background: radial-gradient( circle at 50% 35%, #e9eaff 0%, transparent 43% ), linear-gradient(180deg, #f6f7ff, #ffffff);
+                -webkit-font-smoothing: antialiased;
+            }
+
+            a {
+                text-decoration: none;
+            }
+
+            .access-layout {
+                min-height: 100vh;
+                min-height: 100dvh;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .access-header {
+                width: 100%;
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 30px 24px;
+            }
+
+            .access-brand {
+                display: inline-flex;
+                align-items: center;
+                gap: 12px;
+                font-size: 19px;
+                font-weight: 800;
+                letter-spacing: -.5px;
+                color: var(--navy);
+            }
+
+            .access-brand-mark {
+                width: 42px;
+                height: 42px;
+                display: grid;
+                place-items: center;
+                border-radius: 12px;
+                background: linear-gradient(135deg, #8588ff, #5457e9);
+                color: #fff;
+                font-size: 24px;
+                box-shadow: 0 7px 18px rgba(98,101,245,.18);
+            }
+
+            .access-main {
+                flex: 1;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 50px 24px 90px;
+            }
+
+            .access-card {
+                width: 100%;
+                max-width: 560px;
+                padding: 55px 45px;
+                text-align: center;
+                background: #fff;
+                border: 1px solid #e8ecf5;
+                border-radius: 24px;
+                box-shadow: 0 25px 75px rgba(31,44,95,.09);
+            }
+
+            
+            .access-icon-outer {
+                width: 110px;
+                height: 110px;
+                margin: 0 auto 27px;
+                display: grid;
+                place-items: center;
+                border-radius: 30px;
+                background: #f0f0ff;
+            }
+
+            .access-icon-inner {
+                width: 77px;
+                height: 77px;
+                display: grid;
+                place-items: center;
+                border-radius: 22px;
+                background: #6265f5;
+                color: #ffffff;
+                box-shadow: 0 10px 25px rgba(98, 101, 245, 0.22);
+            }
+
+
+                .access-icon-inner svg {
+                    width: 37px;
+                    height: 37px;
+                    fill: none;
+                    stroke: currentColor;
+                    stroke-width: 1.7;
+                    stroke-linecap: round;
+                    stroke-linejoin: round;
+                }
+
+            .access-code {
+                display: inline-block;
+                padding: 8px 15px;
+                border-radius: 50px;
+                background: #f0f0ff;
+                color: var(--purple);
+                font-size: 12px;
+                font-weight: 800;
+                letter-spacing: 1.3px;
+                margin-bottom: 20px;
+            }
+
+            .access-title {
+                font-size: clamp(27px, 4vw, 37px);
+                letter-spacing: -1.2px;
+                font-weight: 800;
+                color: var(--navy);
+                margin: 0 0 16px;
+            }
+
+            .access-description {
+                max-width: 390px;
+                margin: 0 auto;
+                color: var(--muted);
+                font-size: 14px;
+                line-height: 1.9;
+            }
+
+            .access-divider {
+                height: 1px;
+                background: #edf0f6;
+                margin: 32px 0;
+            }
+
+            .access-actions {
+                display: flex;
+                justify-content: center;
+                gap: 12px;
+                flex-wrap: wrap;
+            }
+
+            .access-button {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 9px;
+                min-height: 47px;
+                padding: 12px 20px;
+                border-radius: 10px;
+                font-size: 13px;
+                font-weight: 700;
+                transition: background .2s, transform .2s;
+            }
+
+                .access-button:hover {
+                    transform: translateY(-2px);
+                }
+
+            .access-button-primary {
+                background: var(--purple);
+                color: #fff;
+                box-shadow: 0 8px 20px rgba(98,101,245,.17);
+            }
+
+                .access-button-primary:hover {
+                    background: var(--purple-dark);
+                    color: #fff;
+                }
+
+            .access-button-secondary {
+                background: #fff;
+                color: #526079;
+                border: 1px solid #dfe5ef;
+            }
+
+                .access-button-secondary:hover {
+                    border-color: var(--purple);
+                    color: var(--purple);
+                }
+
+            .access-note {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                margin-top: 28px;
+                color: #a0aabb;
+                font-size: 12px;
+                line-height: 1.6;
+            }
+
+            .access-footer {
+                padding: 25px 20px;
+                text-align: center;
+                color: #a0aabb;
+                font-size: 12px;
+            }
+
+            @@media (max-width: 600px) {
+                .access-header {
+                    padding: 22px 18px;
+                }
+
+                .access-brand {
+                    font-size: 16px;
+                }
+
+                .access-brand-mark {
+                    width: 37px;
+                    height: 37px;
+                    font-size: 21px;
+                }
+
+                .access-main {
+                    padding: 30px 16px 55px;
+                }
+
+                .access-card {
+                    padding: 42px 22px;
+                    border-radius: 18px;
+                }
+
+                .access-actions {
+                    flex-direction: column;
+                }
+
+                .access-button {
+                    width: 100%;
+                }
+            }
+
+            @@media (prefers-reduced-motion: reduce) {
+                *,
+                *::before,
+                *::after {
+                    transition: none !important;
+                }
+            }
+    </style>
+</head>
+
+<body>
+
+    <div class="access-layout">
+
+        <header class="access-header">
+
+            <a asp-controller="AnaSayfa"
+               asp-action="Index"
+               class="access-brand">
+
+                <span class="access-brand-mark">P</span>
+                Personel Yönetimi
+
+            </a>
+
+        </header>
+
+        <main class="access-main">
+
+            <div class="access-card">
+
+                <div class="access-icon-outer">
+                    <div class="access-icon-inner">
+
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <rect x="4" y="10" width="16" height="11" rx="2" />
+                            <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+                            <circle cx="12" cy="15.5" r="1" />
+                            <path d="M12 16.5v1.5" />
+                        </svg>
+
+                    </div>
+                </div>
+
+                <div class="access-code">
+                    HATA 403
+                </div>
+
+                <h1 class="access-title">
+                    Erişim Engellendi
+                </h1>
+
+                <p class="access-description">
+                    Bu sayfayı görüntülemek için gerekli
+                    yetkiye sahip değilsiniz.
+                    Hesabınızın erişim izinlerini kontrol edin
+                    veya sistem yöneticinizle iletişime geçin.
+                </p>
+
+                <div class="access-divider"></div>
+
+                <div class="access-actions">
+
+                    <a asp-controller="AnaSayfa"
+                       asp-action="Index"
+                       class="access-button access-button-primary">
+
+                        <span aria-hidden="true">←</span>
+                        Ana Sayfaya Dön
+
+                    </a>
+
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <a asp-controller="IzinTalepleri"
+                           asp-action="Index"
+                           class="access-button access-button-secondary">
+
+                            İzin Taleplerim
+                            <span aria-hidden="true">→</span>
+
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-controller="Hesap"
+                           asp-action="Giris"
+                           class="access-button access-button-secondary">
+
+                            Giriş Yap
+                            <span aria-hidden="true">→</span>
+
+                        </a>
+                    }
+
+                </div>
+
+                <div class="access-note">
+                    <span aria-hidden="true">ⓘ</span>
+                    Bu bir erişim yetkisi bilgilendirmesidir.
+                </div>
+
+            </div>
+
+        </main>
+
+        <footer class="access-footer">
+            © @DateTime.Now.Year Personel Yönetimi.
+            Tüm hakları saklıdır.
+        </footer>
+
+    </div>
+
+</body>
+</html>

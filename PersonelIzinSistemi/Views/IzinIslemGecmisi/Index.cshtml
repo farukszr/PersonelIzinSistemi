@@ -1,0 +1,377 @@
+﻿@model IEnumerable<PersonelIzinSistemi.Models.IzinIslemGecmisi>
+@{
+    ViewData["Title"] = "İşlem Geçmişi";
+    var kayitlar = Model.ToList();
+    var toplam = kayitlar.Count;
+    var onay = kayitlar.Count(x => x.IslemTuru == "Onaylama");
+    var red = kayitlar.Count(x => x.IslemTuru == "Reddetme");
+    var diger = toplam - onay - red;
+    var turler = kayitlar.Select(x => x.IslemTuru).Distinct().OrderBy(x => x).ToList();
+    var kullanicilar = ViewBag.Kullanicilar as Dictionary<string, string>
+    ?? new Dictionary<string, string>();
+
+    var izinPersonelleri = ViewBag.IzinPersonelleri as Dictionary<int, string>
+        ?? new Dictionary<int, string>();
+}
+<style>
+    .audit-page {
+        max-width: 1450px;
+        margin: 0 auto;
+        padding: 24px 12px 50px;
+        color: #192640;
+        font-family: inherit
+    }
+
+        .audit-page * {
+            box-sizing: border-box
+        }
+
+    .audit-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 18px;
+        margin-bottom: 26px
+    }
+
+    .audit-eyebrow {
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 2px;
+        color: #6265f5;
+        margin-bottom: 8px
+    }
+
+    .audit-head h1 {
+        font-size: 28px;
+        letter-spacing: -.6px;
+        margin: 0 0 9px;
+        font-weight: 800
+    }
+
+    .audit-head p {
+        margin: 0;
+        color: #8b96a9;
+        font-size: 13px
+    }
+
+    .audit-back {
+        padding: 12px 17px;
+        border: 1px solid #e0e5f2;
+        border-radius: 11px;
+        background: #fff;
+        color: #5558d8;
+        font-size: 13px;
+        font-weight: 750;
+        text-decoration: none
+    }
+
+        .audit-back:hover {
+            background: #eff0ff;
+            color: #4548bb
+        }
+
+    .audit-stats {
+        display: grid;
+        grid-template-columns: repeat(4,minmax(0,1fr));
+        gap: 16px;
+        margin-bottom: 24px
+    }
+
+    .audit-stat {
+        background: #fff;
+        border: 1px solid #e8edf5;
+        border-radius: 16px;
+        padding: 21px;
+        box-shadow: 0 5px 20px rgba(25,40,75,.035)
+    }
+
+        .audit-stat .label {
+            font-size: 12px;
+            color: #8a96aa;
+            font-weight: 600
+        }
+
+        .audit-stat .value {
+            font-size: 31px;
+            font-weight: 800;
+            color: #17233b;
+            margin-top: 14px
+        }
+
+    .audit-panel {
+        background: #fff;
+        border: 1px solid #e8edf5;
+        border-radius: 17px;
+        overflow: hidden;
+        box-shadow: 0 5px 22px rgba(25,40,75,.035)
+    }
+
+    .audit-panel-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        flex-wrap: wrap;
+        padding: 23px 25px;
+        border-bottom: 1px solid #edf0f6
+    }
+
+        .audit-panel-head h2 {
+            margin: 0 0 6px;
+            font-size: 17px;
+            font-weight: 800
+        }
+
+        .audit-panel-head p {
+            margin: 0;
+            color: #98a2b3;
+            font-size: 12px
+        }
+
+    .audit-tools {
+        display: flex;
+        gap: 9px;
+        flex-wrap: wrap
+    }
+
+        .audit-tools input, .audit-tools select {
+            height: 41px;
+            border: 1px solid #e0e6f0;
+            border-radius: 9px;
+            background: white;
+            color: #344054;
+            font: inherit;
+            font-size: 13px;
+            padding: 0 12px;
+            outline: none
+        }
+
+        .audit-tools input {
+            min-width: 240px
+        }
+
+            .audit-tools input:focus, .audit-tools select:focus {
+                border-color: #6265f5;
+                box-shadow: 0 0 0 3px rgba(98,101,245,.1)
+            }
+
+    .audit-scroll {
+        overflow-x: auto
+    }
+
+    .audit-table {
+        border-collapse: collapse;
+        width: 100%;
+        min-width: 1050px;
+        text-align: left
+    }
+
+        .audit-table th {
+            padding: 17px 20px;
+            background: #fafbfe;
+            color: #8995a9;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            white-space: nowrap
+        }
+
+        .audit-table td {
+            padding: 18px 20px;
+            border-top: 1px solid #f0f2f7;
+            color: #526079;
+            font-size: 12px;
+            vertical-align: middle
+        }
+
+        .audit-table tbody tr:hover {
+            background: #fafbff
+        }
+
+    .audit-tag {
+        display: inline-flex;
+        align-items: center;
+        padding: 8px 11px;
+        border-radius: 8px;
+        font-size: 11px;
+        font-weight: 800;
+        white-space: nowrap;
+        background: #eff0ff;
+        color: #5558d8
+    }
+
+        .audit-tag.approve {
+            background: #e4f8ee;
+            color: #158657
+        }
+
+        .audit-tag.reject {
+            background: #ffebed;
+            color: #c43f4a
+        }
+
+        .audit-tag.undo {
+            background: #fff4dd;
+            color: #a46c0d
+        }
+
+    .audit-mono {
+        font-family: ui-monospace,SFMono-Regular,Consolas,monospace;
+        font-size: 11px;
+        overflow-wrap: anywhere
+    }
+
+    .audit-state {
+        font-weight: 700;
+        color: #344054
+    }
+
+    .audit-foot {
+        padding: 17px 25px;
+        border-top: 1px solid #edf0f6;
+        color: #98a2b3;
+        font-size: 12px
+    }
+
+    .audit-empty {
+        padding: 55px 18px;
+        text-align: center;
+        color: #8995a9;
+        font-size: 13px
+    }
+
+        .audit-empty h3 {
+            font-size: 17px;
+            color: #27344d;
+            margin: 0 0 8px
+        }
+
+    @@media(max-width:1000px) {
+        .audit-stats {
+            grid-template-columns: repeat(2,minmax(0,1fr))
+        }
+    }
+
+    @@media(max-width:650px) {
+        .audit-page {
+            padding: 12px 0 30px
+        }
+
+        .audit-head h1 {
+            font-size: 24px
+        }
+
+        .audit-tools, .audit-tools input, .audit-tools select {
+            width: 100%
+        }
+
+        .audit-stat {
+            padding: 16px
+        }
+
+        .audit-panel-head {
+            padding: 19px 16px
+        }
+    }
+</style>
+<div class="audit-page">
+    <div class="audit-head">
+        <div>
+            <div class="audit-eyebrow">İNSAN KAYNAKLARI / YÖNETİM</div>
+            <h1>İşlem Geçmişi</h1>
+            <p>İzin talepleri üzerinde gerçekleştirilen yönetici işlemlerini takip edin.</p>
+        </div>
+        <a class="audit-back" asp-controller="IzinTalepleri" asp-action="Index">← İzin Taleplerine Dön</a>
+    </div>
+    <div class="audit-stats">
+        <div class="audit-stat"><div class="label">Toplam İşlem</div><div class="value">@toplam</div></div>
+        <div class="audit-stat"><div class="label">Onaylama</div><div class="value">@onay</div></div>
+        <div class="audit-stat"><div class="label">Reddetme</div><div class="value">@red</div></div>
+        <div class="audit-stat"><div class="label">Diğer İşlemler</div><div class="value">@diger</div></div>
+    </div>
+    <section class="audit-panel">
+        <div class="audit-panel-head">
+            <div><h2>İşlem Kayıtları</h2><p>En yeni işlemler ilk sırada listelenir.</p></div>
+            @if (toplam > 0)
+            {
+                <div class="audit-tools">
+                    <input id="auditSearch" type="search" placeholder="İşlem, personel, yönetici veya izin no ara..." aria-label="İşlem geçmişinde ara" />
+                    <select id="auditFilter" aria-label="İşlem türüne göre filtrele">
+                        <option value="">Tüm İşlemler</option>
+                        @foreach (var tur in turler)
+                        {
+                            <option value="@tur">@tur</option>
+                        }
+                    </select>
+                </div>
+            }
+        </div>
+        @if (toplam == 0)
+        {
+            <div class="audit-empty"><h3>Henüz işlem kaydı yok</h3><p>Yöneticiler izin işlemi yaptığında burada görünecek.</p></div>
+        }
+        else
+        {
+            <div class="audit-scroll">
+                <table class="audit-table">
+                    <thead><tr><th>İşlem</th><th>İzin Talebi</th><th>Önceki Durum</th><th>Yeni Durum</th><th>İşlemi Yapan</th><th>Tarih / Saat (Türkiye)</th></tr></thead>
+                    <tbody>
+                        @foreach (var kayit in kayitlar)
+                        {
+                            var sinif = kayit.IslemTuru == "Onaylama" ? "approve" : kayit.IslemTuru == "Reddetme" ? "reject" : kayit.IslemTuru == "Kararı Geri Alma" ? "undo" : "";
+                            var utcTarih = DateTime.SpecifyKind(kayit.IslemTarihi, DateTimeKind.Utc);
+                            var trTarih = TimeZoneInfo.ConvertTimeFromUtc(utcTarih, TimeZoneInfo.FindSystemTimeZoneById("Turkey Standard Time"));
+                            <tr class="audit-row" data-type="@kayit.IslemTuru">
+                                <td><span class="audit-tag @sinif">@kayit.IslemTuru</span></td>
+                                <td>
+                                    <strong>#@kayit.IzinTalebiId</strong>
+                                    <div style="margin-top:5px;color:#8591a5;font-size:11px;">
+                                        @(izinPersonelleri.TryGetValue(kayit.IzinTalebiId, out var personelAdi)
+                                            ? personelAdi
+                                            : "Bilinmeyen Personel")
+                                    </div>
+                                </td>
+                                <td><span class="audit-state">@kayit.OncekiDurum</span></td>
+                                <td><span class="audit-state">@kayit.YeniDurum</span></td>
+                                <td class="audit-mono">
+                                    @(kullanicilar.TryGetValue(kayit.IslemiYapanKullaniciId, out var kullaniciAdi)
+                                        ? kullaniciAdi
+                                        : "Bilinmeyen Kullanıcı")
+                                </td>
+                                <td>@trTarih.ToString("dd.MM.yyyy HH:mm:ss")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div id="auditNoMatch" class="audit-empty" hidden><h3>Sonuç bulunamadı</h3><p>Arama veya filtre kriterlerinizi değiştirin.</p></div>
+            <div class="audit-foot"><span id="auditCount">@toplam</span> / @toplam kayıt gösteriliyor</div>
+        }
+    </section>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const search = document.getElementById("auditSearch");
+        const filter = document.getElementById("auditFilter");
+        if (!search || !filter) return;
+        const rows = document.querySelectorAll(".audit-row");
+        const count = document.getElementById("auditCount");
+        const empty = document.getElementById("auditNoMatch");
+        function update() {
+            const q = search.value.trim().toLocaleLowerCase("tr-TR");
+            const type = filter.value;
+            let visible = 0;
+            rows.forEach(function (row) {
+                const matches = row.textContent.toLocaleLowerCase("tr-TR").includes(q) && (!type || row.dataset.type === type);
+                row.hidden = !matches;
+                if (matches) visible++;
+            });
+            if (count) count.textContent = visible;
+            if (empty) empty.hidden = visible !== 0;
+        }
+        search.addEventListener("input", update);
+        filter.addEventListener("change", update);
+    });
+</script>

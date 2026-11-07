@@ -1,0 +1,858 @@
+﻿@model IEnumerable<PersonelIzinSistemi.Models.IzinTalebi>
+@{
+    ViewData["Title"] = "İzin Arşivi";
+    var izinler = Model.ToList();
+    var toplam = izinler.Count;
+    var onaylanan = izinler.Count(i => i.Durum == "Onaylandı");
+    var reddedilen = izinler.Count(i => i.Durum == "Reddedildi");
+}
+
+<style>
+    .leave-list-page {
+        max-width: 1500px;
+        margin: 0 auto;
+        padding: 22px 12px 48px;
+        color: #1d293f;
+    }
+
+        .leave-list-page * {
+            box-sizing: border-box;
+        }
+
+    .leave-list-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+        margin-bottom: 28px;
+    }
+
+    .leave-list-eyebrow {
+        font-size: 11px;
+        letter-spacing: 2px;
+        font-weight: 800;
+        color: #6669ed;
+        margin-bottom: 10px;
+    }
+
+    .leave-list-header h1 {
+        font-size: 28px;
+        font-weight: 750;
+        letter-spacing: -.6px;
+        margin: 0 0 10px;
+    }
+
+    .leave-list-header p {
+        color: #8a96a9;
+        font-size: 14px;
+        margin: 0;
+    }
+
+    .leave-list-create {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: #6265f5;
+        color: #fff;
+        padding: 13px 19px;
+        border-radius: 11px;
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+        box-shadow: 0 5px 15px rgba(98,101,245,.17);
+        transition: .2s;
+    }
+
+        .leave-list-create:hover {
+            background: #4e51dc;
+            color: #fff;
+            transform: translateY(-2px);
+        }
+
+    .leave-list-stats {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0,1fr));
+        gap: 18px;
+        margin-bottom: 28px;
+    }
+
+    .leave-list-stat {
+        background: #fff;
+        border: 1px solid #e8edf5;
+        border-radius: 16px;
+        padding: 22px;
+        box-shadow: 0 5px 20px rgba(25,40,75,.035);
+    }
+
+    .leave-list-stat-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .leave-list-stat-label {
+        color: #8591a5;
+        font-size: 13px;
+        font-weight: 550;
+    }
+
+    .leave-list-stat-icon {
+        width: 43px;
+        height: 43px;
+        display: grid;
+        place-items: center;
+        border-radius: 12px;
+        font-size: 20px;
+        font-weight: 700;
+    }
+
+    .leave-list-icon-total {
+        color: #6265f5;
+        background: #eff0ff;
+    }
+
+    .leave-list-icon-pending {
+        color: #d58b13;
+        background: #fff5df;
+    }
+
+    .leave-list-icon-approved {
+        color: #16a36a;
+        background: #e4f8ee;
+    }
+
+    .leave-list-icon-rejected {
+        color: #dc4c55;
+        background: #ffebed;
+    }
+
+    .leave-list-stat-value {
+        font-size: 32px;
+        line-height: 1;
+        font-weight: 800;
+        letter-spacing: -.7px;
+        color: #17233b;
+    }
+
+    .leave-list-stat-subtitle {
+        margin-top: 12px;
+        font-size: 12px;
+        color: #a0aabb;
+    }
+
+    .leave-list-panel {
+        background: #fff;
+        border: 1px solid #e8edf5;
+        border-radius: 17px;
+        box-shadow: 0 5px 22px rgba(25,40,75,.035);
+        overflow: hidden;
+    }
+
+    .leave-list-panel-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 18px;
+        padding: 25px 26px;
+        border-bottom: 1px solid #edf0f6;
+    }
+
+        .leave-list-panel-header h2 {
+            font-size: 17px;
+            font-weight: 750;
+            margin: 0 0 6px;
+        }
+
+        .leave-list-panel-header p {
+            font-size: 12px;
+            color: #98a2b3;
+            margin: 0;
+        }
+
+    .leave-list-tools {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .leave-list-search,
+    .leave-list-filter {
+        height: 41px;
+        border: 1px solid #e0e6f0;
+        border-radius: 9px;
+        background: #fff;
+        color: #344054;
+        font-size: 13px;
+        font-family: inherit;
+        outline: none;
+        padding: 0 13px;
+    }
+
+    .leave-list-search {
+        width: 220px;
+    }
+
+        .leave-list-search:focus,
+        .leave-list-filter:focus {
+            border-color: #6265f5;
+            box-shadow: 0 0 0 3px rgba(98,101,245,.09);
+        }
+
+    .leave-list-table-wrap {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .leave-list-table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+        min-width: 850px;
+    }
+
+        .leave-list-table th {
+            padding: 17px 22px;
+            background: #fafbfe;
+            color: #8995a9;
+            font-size: 11px;
+            font-weight: 750;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            border-bottom: 1px solid #edf0f6;
+            white-space: nowrap;
+        }
+
+        .leave-list-table td {
+            padding: 19px 22px;
+            border-bottom: 1px solid #f0f2f7;
+            font-size: 13px;
+            color: #526079;
+            vertical-align: middle;
+        }
+
+        .leave-list-table tbody tr {
+            transition: background .2s;
+        }
+
+            .leave-list-table tbody tr:hover {
+                background: #fafbff;
+            }
+
+            .leave-list-table tbody tr:last-child td {
+                border-bottom: none;
+            }
+
+    .leave-list-person {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        min-width: 150px;
+    }
+
+    .leave-list-avatar {
+        width: 37px;
+        height: 37px;
+        border-radius: 11px;
+        display: grid;
+        place-items: center;
+        background: #eef0ff;
+        color: #6265f5;
+        font-size: 12px;
+        font-weight: 800;
+        flex-shrink: 0;
+    }
+
+    .leave-list-person-name {
+        color: #27344d;
+        font-weight: 700;
+    }
+
+    .leave-list-date {
+        white-space: nowrap;
+        color: #53617a;
+        font-weight: 550;
+    }
+
+    .leave-list-reason {
+        display: block;
+        max-width: 250px;
+        overflow-wrap: anywhere;
+        line-height: 1.6;
+    }
+
+    .leave-list-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 8px 11px;
+        border-radius: 8px;
+        font-size: 11px;
+        font-weight: 750;
+        white-space: nowrap;
+    }
+
+        .leave-list-status::before {
+            content: "";
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+    .leave-list-pending {
+        background: #fff4dd;
+        color: #b77912;
+    }
+
+    .leave-list-approved {
+        background: #e3f8ed;
+        color: #168657;
+    }
+
+    .leave-list-rejected {
+        background: #ffe8eb;
+        color: #c43f4a;
+    }
+
+    .leave-list-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+        .leave-list-actions form {
+            margin: 0;
+        }
+
+    .leave-list-action {
+        border: 1px solid transparent;
+        border-radius: 8px;
+        padding: 9px 12px;
+        font-family: inherit;
+        font-size: 11px;
+        font-weight: 750;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: .2s;
+    }
+
+    .leave-list-approve {
+        background: #e4f8ee;
+        color: #158657;
+        border-color: #c9efda;
+    }
+
+        .leave-list-approve:hover {
+            background: #16a36a;
+            color: #fff;
+        }
+
+    .leave-list-reject {
+        background: #ffebed;
+        color: #c43f4a;
+        border-color: #ffd7db;
+    }
+
+        .leave-list-reject:hover {
+            background: #dc4c55;
+            color: #fff;
+        }
+
+    .leave-list-finished {
+        color: #a0aabb;
+        font-size: 12px;
+        white-space: nowrap;
+    }
+
+    .leave-list-empty {
+        text-align: center;
+        padding: 65px 20px;
+    }
+
+    .leave-list-empty-icon {
+        width: 66px;
+        height: 66px;
+        display: grid;
+        place-items: center;
+        margin: 0 auto 20px;
+        border-radius: 18px;
+        background: #eff0ff;
+        color: #6265f5;
+        font-size: 28px;
+    }
+
+    .leave-list-empty h3 {
+        font-size: 17px;
+        margin: 0 0 9px;
+    }
+
+    .leave-list-empty p {
+        color: #98a2b3;
+        font-size: 13px;
+        margin: 0;
+    }
+
+    .leave-list-footer {
+        padding: 17px 26px;
+        border-top: 1px solid #edf0f6;
+        color: #98a2b3;
+        font-size: 12px;
+    }
+
+    .leave-list-message {
+        padding: 13px 18px;
+        border-radius: 10px;
+        background: #e4f8ee;
+        color: #167c51;
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        border: 1px solid #c9efda;
+    }
+
+    @@media (max-width: 1100px) {
+        .leave-list-stats {
+            grid-template-columns: repeat(2, minmax(0,1fr));
+        }
+    }
+
+    @@media (max-width: 650px) {
+        .leave-list-page {
+            padding: 12px 0 30px;
+        }
+
+        .leave-list-header h1 {
+            font-size: 24px;
+        }
+
+        .leave-list-create {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .leave-list-stats {
+            gap: 10px;
+        }
+
+        .leave-list-stat {
+            padding: 16px;
+        }
+
+        .leave-list-stat-value {
+            font-size: 27px;
+        }
+
+        .leave-list-stat-icon {
+            width: 35px;
+            height: 35px;
+            font-size: 17px;
+        }
+
+        .leave-list-panel-header {
+            padding: 20px 16px;
+        }
+
+        .leave-list-tools,
+        .leave-list-search,
+        .leave-list-filter {
+            width: 100%;
+        }
+
+        .leave-list-table th,
+        .leave-list-table td {
+            padding: 15px;
+        }
+    }
+
+    .leave-list-message-error {
+        background: #ffebed;
+        color: #b42335;
+        border-color: #ffd7db;
+    }
+
+    /* İzin kararı onay penceresi */
+    .izin-modal-overlay[hidden] {
+        display: none !important;
+    }
+
+    .izin-modal-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background: rgba(16,29,54,.68);
+        backdrop-filter: blur(5px);
+    }
+
+    .izin-modal {
+        box-sizing: border-box;
+        width: 100%;
+        max-width: 430px;
+        background: #fff;
+        padding: 36px 30px 30px;
+        border-radius: 24px;
+        text-align: center;
+        box-shadow: 0 24px 75px rgba(0,0,0,.22);
+        animation: izin-modal-giris .2s ease-out;
+    }
+
+    .izin-modal-icon {
+        width: 76px;
+        height: 76px;
+        margin: 0 auto 24px;
+        display: grid;
+        place-items: center;
+        border-radius: 22px;
+        background: #6265f5;
+        color: #fff;
+        box-shadow: 0 10px 25px rgba(98,101,245,.22);
+    }
+
+        .izin-modal-icon.reject {
+            background: #dc4545;
+            box-shadow: 0 10px 25px rgba(220,69,69,.18);
+        }
+
+        .izin-modal-icon svg {
+            width: 35px;
+            height: 35px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2.2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+    .izin-modal h2 {
+        color: #101d36;
+        font-size: 23px;
+        font-weight: 750;
+        margin: 0 0 12px;
+    }
+
+    .izin-modal p {
+        color: #64748b;
+        font-size: 14px;
+        line-height: 1.7;
+        margin: 0 0 28px;
+    }
+
+    .izin-modal-actions {
+        display: flex;
+        gap: 12px;
+    }
+
+        .izin-modal-actions button {
+            flex: 1;
+            padding: 13px 12px;
+            border: 0;
+            border-radius: 11px;
+            font: 650 14px inherit;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 650;
+            cursor: pointer;
+            transition: background .2s;
+        }
+
+    .izin-modal-cancel {
+        background: #f1f3f8;
+        color: #475569;
+    }
+
+        .izin-modal-cancel:hover {
+            background: #e2e8f0;
+        }
+
+    .izin-modal-confirm {
+        background: #6265f5;
+        color: #fff;
+    }
+
+        .izin-modal-confirm:hover {
+            background: #5053db;
+        }
+
+        .izin-modal-confirm.reject {
+            background: #dc4545;
+        }
+
+            .izin-modal-confirm.reject:hover {
+                background: #bc3030;
+            }
+
+    .izin-modal-actions button:focus-visible {
+        outline: 3px solid #a5b4fc;
+        outline-offset: 3px;
+    }
+
+    .izin-modal-actions button:disabled {
+        opacity: .65;
+        cursor: wait;
+    }
+
+    @@keyframes izin-modal-giris {
+        from {
+            opacity: 0;
+            transform: translateY(12px) scale(.97);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .izin-modal {
+            padding: 30px 22px 24px;
+        }
+
+            .izin-modal h2 {
+                font-size: 20px;
+            }
+    }
+
+    @@media (prefers-reduced-motion: reduce) {
+        .izin-modal {
+            animation: none;
+        }
+    }
+
+    .archive-top-actions {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .archive-return {
+        display: inline-flex;
+        padding: 12px 18px;
+        border-radius: 10px;
+        background: #6265f5;
+        color: white;
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+        .archive-return:hover {
+            background: #4e51dc;
+            color: white;
+        }
+
+    .archive-restore {
+        background: #eff0ff;
+        color: #5155d6;
+        border-color: #dfe0ff;
+    }
+
+        .archive-restore:hover {
+            background: #6265f5;
+            color: white;
+        }
+
+    .archive-info {
+        padding: 16px 22px;
+        background: #f7f8ff;
+        color: #65718a;
+        font-size: 13px;
+        border-bottom: 1px solid #e8edf5;
+    }
+
+    .izin-modal-icon.neutral {
+        background: #6265f5;
+    }
+</style>
+<div class="leave-list-page">
+    <div class="leave-list-header">
+        <div>
+            <div class="leave-list-eyebrow">İNSAN KAYNAKLARI / ARŞİV</div>
+            <h1>İzin Arşivi</h1>
+            <p>Sonuçlandırılmış izin kayıtlarını inceleyin ve gerektiğinde aktif listeye geri alın.</p>
+        </div>
+        <div class="archive-top-actions">
+            <a asp-controller="IzinTalepleri" asp-action="Index" class="archive-return">← Aktif Taleplere Dön</a>
+        </div>
+    </div>
+    @if (TempData["Success"] != null)
+    {
+        <div class="leave-list-message" role="status">@TempData["Success"]</div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="leave-list-message leave-list-message-error" role="alert">@TempData["Error"]</div>
+    }
+    <div class="leave-list-stats">
+        <div class="leave-list-stat">
+            <div class="leave-list-stat-top"><span class="leave-list-stat-label">Arşivdeki Toplam</span><span class="leave-list-stat-icon leave-list-icon-total">▤</span></div>
+            <div class="leave-list-stat-value">@toplam</div><div class="leave-list-stat-subtitle">Saklanan izin kayıtları</div>
+        </div>
+        <div class="leave-list-stat">
+            <div class="leave-list-stat-top"><span class="leave-list-stat-label">Onaylanan</span><span class="leave-list-stat-icon leave-list-icon-approved">✓</span></div>
+            <div class="leave-list-stat-value">@onaylanan</div><div class="leave-list-stat-subtitle">Onaylanmış arşiv kayıtları</div>
+        </div>
+        <div class="leave-list-stat">
+            <div class="leave-list-stat-top"><span class="leave-list-stat-label">Reddedilen</span><span class="leave-list-stat-icon leave-list-icon-rejected">×</span></div>
+            <div class="leave-list-stat-value">@reddedilen</div><div class="leave-list-stat-subtitle">Reddedilmiş arşiv kayıtları</div>
+        </div>
+        <div class="leave-list-stat">
+            <div class="leave-list-stat-top"><span class="leave-list-stat-label">İşlem</span><span class="leave-list-stat-icon leave-list-icon-pending">↶</span></div>
+            <div class="leave-list-stat-value" style="font-size:19px">Geri Yükle</div><div class="leave-list-stat-subtitle">Karar değişmeden aktif listeye</div>
+        </div>
+    </div>
+    <div class="leave-list-panel">
+        <div class="leave-list-panel-header">
+            <div><h2>Arşivlenmiş İzinler</h2><p>Geçmiş izin başvuruları ve durumları</p></div>
+            @if (toplam > 0)
+            {
+                <div class="leave-list-tools">
+                    <input type="search" id="leaveSearch" class="leave-list-search" placeholder="Personel veya neden ara..." aria-label="Arşivde ara" />
+                    <select id="leaveStatusFilter" class="leave-list-filter" aria-label="Duruma göre filtrele">
+                        <option value="all">Tüm Durumlar</option>
+                        <option value="Onaylandı">Onaylandı</option>
+                        <option value="Reddedildi">Reddedildi</option>
+                    </select>
+                </div>
+            }
+        </div>
+        <div class="archive-info">Arşivden çıkarmak kaydı silmez ve izin kararını değiştirmez.</div>
+        @if (toplam == 0)
+        {
+            <div class="leave-list-empty"><div class="leave-list-empty-icon">▤</div><h3>Arşiv henüz boş</h3><p>Arşivlediğiniz izinler burada görüntülenecek.</p></div>
+        }
+        else
+        {
+            <div class="leave-list-table-wrap">
+                <table class="leave-list-table">
+                    <thead><tr><th>Personel</th><th>Başlangıç</th><th>Bitiş</th><th>İzin Nedeni</th><th>Durum</th><th>İşlemler</th></tr></thead>
+                    <tbody>
+                        @foreach (var izin in izinler)
+                        {
+                            var personelAdi = izin.Personel != null ? $"{izin.Personel.Ad} {izin.Personel.Soyad}" : "Bilinmeyen Personel";
+                            var basHarfler = string.Concat(personelAdi.Split(' ', StringSplitOptions.RemoveEmptyEntries).Take(2).Select(x => x.Substring(0, 1))).ToUpperInvariant();
+                            <tr class="leave-data-row" data-status="@izin.Durum">
+                                <td><div class="leave-list-person"><div class="leave-list-avatar">@basHarfler</div><span class="leave-list-person-name">@personelAdi</span></div></td>
+                                <td class="leave-list-date">@izin.BaslangicTarihi.ToString("dd.MM.yyyy")</td>
+                                <td class="leave-list-date">@izin.BitisTarihi.ToString("dd.MM.yyyy")</td>
+                                <td><span class="leave-list-reason">@izin.IzinNedeni</span></td>
+                                <td>
+                                    @if (izin.Durum == "Onaylandı")
+                                    {
+                                        <span class="leave-list-status leave-list-approved">Onaylandı</span>
+                                    }
+                                    else if (izin.Durum == "Reddedildi")
+                                    {
+                                        <span class="leave-list-status leave-list-rejected">Reddedildi</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="leave-list-status leave-list-pending">Beklemede</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="leave-list-actions">
+                                        <form asp-controller="IzinTalepleri" asp-action="ArsivdenCikar" asp-route-id="@izin.Id" method="post" class="izin-karar-form" data-personel="@personelAdi">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="leave-list-action archive-restore">↶ Arşivden Çıkar</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div id="leaveFilterEmpty" class="leave-list-empty" style="display:none"><div class="leave-list-empty-icon">⌕</div><h3>Sonuç bulunamadı</h3><p>Arama veya filtre kriterlerini değiştirin.</p></div>
+            <div class="leave-list-footer"><span id="leaveVisibleCount">@toplam</span> / @toplam arşiv kaydı gösteriliyor</div>
+        }
+    </div>
+</div>
+
+<div id="izinKararModal" class="izin-modal-overlay" hidden>
+    <div class="izin-modal" role="dialog" aria-modal="true" aria-labelledby="izinModalBaslik" aria-describedby="izinModalAciklama" tabindex="-1">
+        <div class="izin-modal-icon neutral" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 4h18v4H3z M5 8v12h14V8 M10 12h4" /></svg></div>
+        <h2 id="izinModalBaslik">Arşivden çıkar</h2>
+        <p id="izinModalAciklama">Bu kaydı aktif listeye geri getirmek istiyor musunuz?</p>
+        <div class="izin-modal-actions"><button type="button" id="izinModalVazgec" class="izin-modal-cancel">Vazgeç</button><button type="button" id="izinModalOnay" class="izin-modal-confirm">Evet, Geri Getir</button></div>
+    </div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const overlay = document.getElementById("izinKararModal");
+        const modal = overlay.querySelector(".izin-modal");
+        const cancelBtn = document.getElementById("izinModalVazgec");
+        const confirmBtn = document.getElementById("izinModalOnay");
+        const description = document.getElementById("izinModalAciklama");
+        let activeForm = null;
+        let previousFocus = null;
+        let previousOverflow = "";
+        document.querySelectorAll(".izin-karar-form").forEach(function (form) {
+            form.addEventListener("submit", function (event) {
+                event.preventDefault();
+                activeForm = form;
+                previousFocus = document.activeElement;
+                previousOverflow = document.body.style.overflow;
+                description.textContent = `${form.dataset.personel || "Bu personel"} için arşivlenmiş izin kaydı, kararı değiştirilmeden aktif listeye geri getirilecek. Devam edilsin mi?`;
+                confirmBtn.disabled = false;
+                confirmBtn.textContent = "Evet, Geri Getir";
+                overlay.hidden = false;
+                document.body.style.overflow = "hidden";
+                cancelBtn.focus();
+            });
+        });
+        function closeModal() {
+            overlay.hidden = true;
+            document.body.style.overflow = previousOverflow;
+            activeForm = null;
+            if (previousFocus && previousFocus.isConnected) previousFocus.focus();
+        }
+        cancelBtn.addEventListener("click", closeModal);
+        overlay.addEventListener("click", function (event) { if (event.target === overlay) closeModal(); });
+        document.addEventListener("keydown", function (event) {
+            if (overlay.hidden) return;
+            if (event.key === "Escape") { event.preventDefault(); closeModal(); }
+            else if (event.key === "Tab") {
+                const focusable = [cancelBtn, confirmBtn];
+                const index = focusable.indexOf(document.activeElement);
+                if (event.shiftKey && index <= 0) { event.preventDefault(); confirmBtn.focus(); }
+                else if (!event.shiftKey && index === focusable.length - 1) { event.preventDefault(); cancelBtn.focus(); }
+                else if (index === -1) { event.preventDefault(); cancelBtn.focus(); }
+            }
+        });
+        confirmBtn.addEventListener("click", function () {
+            if (!activeForm || confirmBtn.disabled) return;
+            confirmBtn.disabled = true;
+            confirmBtn.textContent = "İşleniyor...";
+            HTMLFormElement.prototype.submit.call(activeForm);
+        });
+        const search = document.getElementById("leaveSearch");
+        const filter = document.getElementById("leaveStatusFilter");
+        const rows = document.querySelectorAll(".leave-data-row");
+        const empty = document.getElementById("leaveFilterEmpty");
+        const visibleCount = document.getElementById("leaveVisibleCount");
+        if (!search || !filter) return;
+        function updateTable() {
+            const query = search.value.trim().toLocaleLowerCase("tr-TR");
+            const status = filter.value;
+            let count = 0;
+            rows.forEach(function (row) {
+                const visible = row.textContent.toLocaleLowerCase("tr-TR").includes(query) && (status === "all" || row.dataset.status === status);
+                row.style.display = visible ? "" : "none";
+                if (visible) count++;
+            });
+            if (empty) empty.style.display = count === 0 ? "block" : "none";
+            if (visibleCount) visibleCount.textContent = count;
+        }
+        search.addEventListener("input", updateTable);
+        filter.addEventListener("change", updateTable);
+    });
+</script>

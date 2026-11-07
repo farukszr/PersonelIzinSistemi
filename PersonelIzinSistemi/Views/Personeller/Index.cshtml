@@ -1,0 +1,115 @@
+@model IEnumerable<PersonelIzinSistemi.Models.Personel>
+
+@{
+    ViewData["Title"] = "Personeller";
+
+    var personeller = Model.ToList();
+}
+
+<div class="page-heading">
+    <div>
+        <div class="eyebrow">EKİP YÖNETİMİ</div>
+
+        <h1>Personeller</h1>
+
+        <p>
+            Çalışan bilgilerini görüntüleyin ve yönetin.
+        </p>
+    </div>
+
+    <a class="btn btn-primary"
+       asp-controller="Personeller"
+       asp-action="Create">
+        ＋ Yeni Personel
+    </a>
+</div>
+
+<div class="panel">
+
+    <div class="panel-heading">
+        <div>
+            <h2>Personel Listesi</h2>
+
+            <p>
+                Toplam @personeller.Count personel listeleniyor.
+            </p>
+        </div>
+    </div>
+
+    <div class="table-scroll">
+
+        <table class="data-table">
+
+            <thead>
+                <tr>
+                    <th>PERSONEL</th>
+                    <th>DEPARTMAN</th>
+                    <th>MAAŞ</th>
+                    <th>İŞLEMLER</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @if (!personeller.Any())
+                {
+                    <tr>
+                        <td colspan="4" class="empty-state">
+                            Henüz personel bulunmuyor.
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var personel in personeller)
+                    {
+                        <tr>
+                            <td>
+                                <div class="person-cell">
+
+                                    <span class="person-avatar">
+                                        @(string.IsNullOrWhiteSpace(personel.Ad)
+                                            ? "?"
+                                            : personel.Ad[0].ToString().ToUpperInvariant())
+                                    </span>
+
+                                    <div>
+                                        <strong>
+                                            @personel.Ad @personel.Soyad
+                                        </strong>
+
+                                        <small>
+                                            Personel #@personel.Id
+                                        </small>
+                                    </div>
+
+                                </div>
+                            </td>
+
+                            <td>
+                                <span class="department-pill">
+                                    @personel.Departman
+                                </span>
+                            </td>
+
+                            <td class="money">
+                                @personel.Maas.ToString("N2") ₺
+                            </td>
+
+                            <td>
+                                <a class="text-link"
+                                   asp-controller="Personeller"
+                                   asp-action="Edit"
+                                   asp-route-id="@personel.Id">
+                                    Düzenle →
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>

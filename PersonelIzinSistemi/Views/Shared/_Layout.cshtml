@@ -1,0 +1,100 @@
+@using Microsoft.EntityFrameworkCore
+@using System.Security.Claims
+@inject PersonelIzinSistemi.Data.AppDbContext ProfileDb
+@{
+    var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var profileUser = string.IsNullOrEmpty(currentUserId)
+        ? null
+        : await ProfileDb.Users.AsNoTracking()
+            .Include(u => u.Personel)
+            .FirstOrDefaultAsync(u => u.Id == currentUserId);
+
+    var firstName = profileUser?.Personel?.Ad?.Trim();
+    var lastName = profileUser?.Personel?.Soyad?.Trim();
+    var hasPersonelName = !string.IsNullOrWhiteSpace(firstName) || !string.IsNullOrWhiteSpace(lastName);
+    var profileEmail = profileUser?.Email ?? User.Identity?.Name ?? "Kullanıcı";
+    var profileName = hasPersonelName
+        ? string.Join(" ", new[] { firstName, lastName }.Where(x => !string.IsNullOrWhiteSpace(x)))
+        : profileEmail;
+    var profileInitials = hasPersonelName
+        ? $"{(string.IsNullOrWhiteSpace(firstName) ? "" : firstName[..1])}{(string.IsNullOrWhiteSpace(lastName) ? "" : lastName[..1])}".ToUpperInvariant()
+        : profileEmail[..1].ToUpperInvariant();
+    var profileRole = User.IsInRole("Yonetici") ? "Yönetici" : "Personel";
+}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] · Personel Yönetimi</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+<div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+        <a class="brand" asp-controller="Anasayfa" asp-action="Index"><span class="brand-icon">P</span><span>Personel<span class="brand-accent"> Yönetimi</span><small>Personel ve İzin Takip Sistemi</small></span></a>
+        <div class="nav-caption">ÇALIŞMA ALANI</div>
+        <nav class="side-nav">
+            @if (User.IsInRole("Yonetici")) {
+            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString()=="Home" ? "active" : "")" asp-controller="Home" asp-action="Index"><span class="nav-symbol">▦</span> Genel Bakış</a>
+            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString()=="Personeller" ? "active" : "")" asp-controller="Personeller" asp-action="Index"><span class="nav-symbol">♙</span> Personeller</a>
+            <a class="nav-link" asp-controller="Kullanicilar" asp-action="Index"><span class="nav-symbol">♙</span> Kullanıcılar</a>
+            }
+
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "IzinTalepleri"
+                    && ViewContext.RouteData.Values["action"]?.ToString() == "Index"
+                    ? "active" : "")"
+                   asp-controller="IzinTalepleri"
+                   asp-action="Index">
+                    <span class="nav-symbol">▤</span>
+                    İzin Talepleri
+                </a>
+
+
+                @if (User.IsInRole("Yonetici"))
+                {
+                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "IzinTalepleri" && ViewContext.RouteData.Values["action"]?.ToString() == "Arsiv" ? "active" : "")"
+                       asp-controller="IzinTalepleri"
+                       asp-action="Arsiv">
+                        <span class="nav-symbol">▣</span>
+                        İzin Arşivi
+                    </a>
+
+                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "IzinIslemGecmisi" ? "active" : "")"
+                       asp-controller="IzinIslemGecmisi"
+                       asp-action="Index">
+                        <span class="nav-symbol">◷</span>
+                        İşlem Geçmişi
+                    </a>
+                }
+
+
+            <form asp-controller="Hesap" asp-action="Cikis" method="post" style="padding:8px 16px"><button type="submit" class="btn" style="width:100%;cursor:pointer">Çıkış Yap</button></form>
+        </nav>
+        <div class="sidebar-bottom">
+            <div class="avatar" aria-label="@profileName profil simgesi">@profileInitials</div>
+            <div class="profile-details">
+                <strong title="@profileName">@profileName</strong>
+                @if (hasPersonelName)
+                {
+                    <span class="profile-email" title="@profileEmail">@profileEmail</span>
+                }
+                <small>@profileRole</small>
+            </div>
+        </div>
+    </aside>
+    <div class="main-area">
+        <header class="topbar"><button class="menu-toggle" type="button" aria-label="Menüyü aç" id="menuToggle">☰</button><span class="breadcrumb">İnsan Kaynakları <span>/</span> @ViewData["Title"]</span><div class="topbar-right"><span class="live-dot"></span> Yerel sistem <div class="avatar small" title="@profileName" aria-label="@profileName profil simgesi">@profileInitials</div></div></header>
+        <main class="content">
+            @if (TempData["Success"] is string message) { <div class="alert-success" role="status">✓ @message</div> }
+            @if (TempData["Error"] is string errorMessage) { <div class="alert-error" role="alert">⚠ @errorMessage</div> }
+            @RenderBody()
+        </main>
+        <footer class="footer">© 2026 Personel Yönetimi · Personel İzin ve Onay Sistemi <span>ASP.NET Core · SQL Server</span></footer>
+    </div>
+</div>
+<div id="menuOverlay" class="menu-overlay"></div>
+<script src="~/js/site.js" asp-append-version="true"></script>
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
