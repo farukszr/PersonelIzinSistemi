@@ -2,6 +2,22 @@
 
 ASP.NET Core MVC (.NET 10), Entity Framework Core, SQL Server ve ASP.NET Core Identity ile geliştirilmiş personel izin yönetimi uygulaması.
 
+## Uygulama Görselleri
+
+### Karşılama Sayfası
+[Karşılama Sayfası](screenshots/01-karsilama.png)
+
+### Yönetici Paneli
+[Yönetici Paneli](screenshots/02-yonetici-paneli.png)
+
+### İzin Talepleri
+[İzin Talepleri](screenshots/03-izin-talepleri.png)
+
+### Kullanıcı Yönetimi
+[Kullanıcı Yönetimi](screenshots/04-kullanici-yonetimi.png)
+
+---
+
 ## Özellikler
 
 - Yönetici ve personel rollerine göre giriş ve yetkilendirme
